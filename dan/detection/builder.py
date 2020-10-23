@@ -1,11 +1,10 @@
-from design.registry import Registry
+from dan.design.registry import Registry, build_from_cfg
 from torch import nn
 
 BACKBONES = Registry('backbone')
 NECKS = Registry('neck')
-ROI_EXTRACTORS = Registry('roi_extractor')
-SHARED_HEADS = Registry('shared_head')
 HEADS = Registry('head')
+HEATMAP = Registry('heatmap')
 LOSSES = Registry('loss')
 DETECTORS = Registry('detector')
 
@@ -42,19 +41,12 @@ def build_neck(cfg):
     return build(cfg, NECKS)
 
 
-def build_roi_extractor(cfg):
-    """Build roi extractor."""
-    return build(cfg, ROI_EXTRACTORS)
-
-
-def build_shared_head(cfg):
-    """Build shared head."""
-    return build(cfg, SHARED_HEADS)
-
-
 def build_head(cfg):
     """Build head."""
     return build(cfg, HEADS)
+
+def build_heatmap(cfg):
+    return build(cfg, HEATMAP)
 
 
 def build_loss(cfg):

@@ -7,7 +7,7 @@ from torch.nn.modules.batchnorm import _BatchNorm
 from ..builder import BACKBONES
 from ..utils import brick as vn_layer
 
-from hyperblock.weight_init import constant_init, kaiming_init
+from dan.hyperblock.weight_init import constant_init, kaiming_init
 
 
 def _make_divisible(x, divisor, width_multiple):
