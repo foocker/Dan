@@ -2,10 +2,24 @@ import os
 import argparse
 import json
 
-from labelme import utils
 import numpy as np
 import glob
-import PIL.Image
+from PIL import Image, ImageDraw
+
+import io, base64
+
+
+def img_data_to_arr(img_data):
+    f = io.BytesIO()
+    f.write(img_data)
+    img_arr = np.array(Image.open(f))
+    return img_arr
+
+
+def img_b64_to_arr(img_b64):
+    img_data = base64.b64decode(img_b64)
+    img_arr = img_data_to_arr(img_data)
+    return img_arr
 
 
 class labelme2coco(object):
@@ -48,9 +62,12 @@ class labelme2coco(object):
 
     def image(self, data, num):
         image = {}
-        img = utils.img_b64_to_arr(data["imageData"])
-        height, width = img.shape[:2]
-        img = None
+        if data["imageData"] is not None:
+            img = img_b64_to_arr(data["imageData"])
+            height, width = img.shape[:2]
+        else:
+            img = None
+            height, width = data["imageHeight"], data["imageWidth"]
         image["height"] = height
         image["width"] = width
         image["id"] = num
@@ -119,9 +136,9 @@ class labelme2coco(object):
 
     def polygons_to_mask(self, img_shape, polygons):
         mask = np.zeros(img_shape, dtype=np.uint8)
-        mask = PIL.Image.fromarray(mask)
+        mask = Image.fromarray(mask)
         xy = list(map(tuple, polygons))
-        PIL.ImageDraw.Draw(mask).polygon(xy=xy, outline=1, fill=1)
+        ImageDraw.Draw(mask).polygon(xy=xy, outline=1, fill=1)
         mask = np.array(mask, dtype=bool)
         return mask
 
@@ -151,7 +168,7 @@ if __name__ == "__main__":
         description="labelme annotation to coco data json file."
     )
     parser.add_argument(
-        "labelme_images",
+        "--labelme_images",
         help="Directory to labelme images and annotation json files.",
         type=str,
     )
@@ -161,3 +178,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     labelme_json = glob.glob(os.path.join(args.labelme_images, "*.json"))
     labelme2coco(labelme_json, args.output)
+    # python3 labelme2cocoAll.py --labelme_images "/aidata/dataset/HeiLJ/heilongjiang-Y" --output "/aidata/dataset/HeiLJ/heilj_coco.json"
