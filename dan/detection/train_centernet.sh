@@ -1,5 +1,5 @@
 # train
-config_p=/root/Codes/Synthesize/mmsdet/centernet/configs/res18_centernet.py
+config_p=/root/Codes/dan/detection/config/res18_centernet.py
 # python main.py ctdet --exp_id coco_dla  --arch res_18 --batch_size 16 --master_batch 4 --lr 1.25e-4  --gpus 0,1
 python train_centernet.py ctdet $config_p --exp_id coco_dla  --arch resdcn_18 --batch_size 16 --master_batch 4 --lr 1.25e-4  --gpus 0,1
 # python main.py --exp_id coco_dla --batch_size 16 --master_batch 4 --lr 1.25e-4  --gpus 0,1

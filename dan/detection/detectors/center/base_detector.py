@@ -3,7 +3,7 @@ import numpy as np
 import time
 import torch
 
-from dan.detection.center_checkpoint import load_model
+from dan.detection.utils import load_model
 from dan.detection.core.center.image import get_affine_transform
 from dan.detection.utils.debugger import Debugger
 

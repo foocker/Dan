@@ -1,7 +1,7 @@
 import time
 import torch
 from progress.bar import Bar
-from dan.data_parallel import DataParallel
+from dan.data import DataParallel
 
 
 class AverageMeter(object):

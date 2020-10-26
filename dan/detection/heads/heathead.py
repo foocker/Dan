@@ -7,6 +7,7 @@ from ..builder import HEADS
 
 BN_MOMENTUM = 0.1
 
+
 def fill_up_weights(up):
     w = up.weight.data
     f = math.ceil(w.size(2) / 2)
@@ -16,8 +17,9 @@ def fill_up_weights(up):
             w[0, 0, i, j] = \
                 (1 - math.fabs(i / f - c)) * (1 - math.fabs(j / f - c))
     for c in range(1, w.size(0)):
-        w[c, 0, :, :] = w[0, 0, :, :] 
-        
+        w[c, 0, :, :] = w[0, 0, :, :]
+
+
 def fill_fc_weights(layers):
     for m in layers.modules():
         if isinstance(m, nn.Conv2d):
@@ -32,8 +34,8 @@ def fill_fc_weights(layers):
 class HeatHead(nn.Module):
     def __init__(self, heads, head_conv, dcn=None):
         super(HeatHead, self).__init__()
-        self.inplanes = 512   # the outplanes from resnet 
-        self.heads = heads    # config dict
+        self.inplanes = 512  # the outplanes from resnet
+        self.heads = heads  # config dict
         self.deconv_with_bias = True
 
         # used for deconv layers
@@ -47,20 +49,28 @@ class HeatHead(nn.Module):
             classes = self.heads[head]
             if head_conv > 0:
                 fc = nn.Sequential(
-                  nn.Conv2d(64, head_conv,
-                    kernel_size=3, padding=1, bias=True),
-                  nn.ReLU(inplace=True),
-                  nn.Conv2d(head_conv, classes, 
-                    kernel_size=1, stride=1, 
-                    padding=0, bias=True))
+                    nn.Conv2d(64,
+                              head_conv,
+                              kernel_size=3,
+                              padding=1,
+                              bias=True), nn.ReLU(inplace=True),
+                    nn.Conv2d(head_conv,
+                              classes,
+                              kernel_size=1,
+                              stride=1,
+                              padding=0,
+                              bias=True))
                 if 'hm' in head:
                     fc[-1].bias.data.fill_(-2.19)
                 else:
                     fill_fc_weights(fc)
             else:
-                fc = nn.Conv2d(64, classes, 
-                  kernel_size=1, stride=1, 
-                  padding=0, bias=True)
+                fc = nn.Conv2d(64,
+                               classes,
+                               kernel_size=1,
+                               stride=1,
+                               padding=0,
+                               bias=True)
                 if 'hm' in head:
                     fc.bias.data.fill_(-2.19)
                 else:
@@ -93,21 +103,24 @@ class HeatHead(nn.Module):
 
             planes = num_filters[i]
             # if dcn is not None:
-                # fc = DCNv2(self.inplanes, planes, 
-                #         kernel_size=(3,3), stride=1,
-                #         padding=1, dilation=1, deformable_groups=1)
-            fc = nn.Conv2d(self.inplanes, planes,
-                    kernel_size=3, stride=1, 
-                    padding=1, dilation=1, bias=False)
+            # fc = DCNv2(self.inplanes, planes,
+            #         kernel_size=(3,3), stride=1,
+            #         padding=1, dilation=1, deformable_groups=1)
+            fc = nn.Conv2d(self.inplanes,
+                           planes,
+                           kernel_size=3,
+                           stride=1,
+                           padding=1,
+                           dilation=1,
+                           bias=False)
             fill_fc_weights(fc)
-            up = nn.ConvTranspose2d(
-                    in_channels=planes,
-                    out_channels=planes,
-                    kernel_size=kernel,
-                    stride=2,
-                    padding=padding,
-                    output_padding=output_padding,
-                    bias=self.deconv_with_bias)
+            up = nn.ConvTranspose2d(in_channels=planes,
+                                    out_channels=planes,
+                                    kernel_size=kernel,
+                                    stride=2,
+                                    padding=padding,
+                                    output_padding=output_padding,
+                                    bias=self.deconv_with_bias)
             fill_up_weights(up)
 
             layers.append(fc)

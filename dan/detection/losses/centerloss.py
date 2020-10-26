@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..builder import loss_res
+from ..builder import LOSSES
 from ..core.center.utils import _transpose_and_gather_feat
 
 def _neg_loss(pred, gt):
@@ -93,7 +93,7 @@ class FocalLoss(nn.Module):
         return self.neg_loss(out, target)
 
 
-@LOSSES._register_module()
+@LOSSES.register_module()
 class RegLoss(nn.Module):
     '''Regression loss for an output tensor
     Arguments:

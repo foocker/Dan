@@ -4,11 +4,12 @@ from progress.bar import Bar
 import time
 import torch
 
-try:
-    from external.nms import soft_nms
-except:
-    print('NMS not imported! If you need it,'
-          ' do \n cd $CenterNet_ROOT/src/lib/external \n make')
+# try:
+#     from external.nms import soft_nms
+# except:
+#     print('NMS not imported! If you need it,'
+#           ' do \n cd $CenterNet_ROOT/src/lib/external \n make')
+
 from dan.detection.core.center.decode import ctdet_decode
 from dan.detection.core.center.utils import flip_tensor
 from dan.detection.core.center.image import get_affine_transform
@@ -60,23 +61,23 @@ class CtdetDetector(BaseDetector):
             dets[0][j][:, :4] /= scale
         return dets[0]
 
-    def merge_outputs(self, detections):
-        results = {}
-        for j in range(1, self.num_classes + 1):
-            results[j] = np.concatenate(
-                [detection[j] for detection in detections],
-                axis=0).astype(np.float32)
-            if len(self.scales) > 1 or self.opt.nms:
-                soft_nms(results[j], Nt=0.5, method=2)
-        scores = np.hstack(
-            [results[j][:, 4] for j in range(1, self.num_classes + 1)])
-        if len(scores) > self.max_per_image:
-            kth = len(scores) - self.max_per_image
-            thresh = np.partition(scores, kth)[kth]
-            for j in range(1, self.num_classes + 1):
-                keep_inds = (results[j][:, 4] >= thresh)
-                results[j] = results[j][keep_inds]
-        return results
+    # def merge_outputs(self, detections):
+    #     results = {}
+    #     for j in range(1, self.num_classes + 1):
+    #         results[j] = np.concatenate(
+    #             [detection[j] for detection in detections],
+    #             axis=0).astype(np.float32)
+    #         if len(self.scales) > 1 or self.opt.nms:
+    #             soft_nms(results[j], Nt=0.5, method=2)
+    #     scores = np.hstack(
+    #         [results[j][:, 4] for j in range(1, self.num_classes + 1)])
+    #     if len(scores) > self.max_per_image:
+    #         kth = len(scores) - self.max_per_image
+    #         thresh = np.partition(scores, kth)[kth]
+    #         for j in range(1, self.num_classes + 1):
+    #             keep_inds = (results[j][:, 4] >= thresh)
+    #             results[j] = results[j][keep_inds]
+    #     return results
 
     def debug(self, debugger, images, dets, output, scale=1):
         detection = dets.detach().cpu().numpy().copy()

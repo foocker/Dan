@@ -1,19 +1,15 @@
 import os
 
 import torch
-import torch.utils.data
-from .center_opts import opts
-# from centernet.utils import _init_paths
-# from centernet.utils.logger import Logger
+from  torch.utils.data import DataLoader
+from dan.detection.center_opts import opts
 from dan.detection.apis.centernet.ctdet import CtdetTrainer
-from dan.data.cig_box import CigBox
-from dan.data.data_parallel import DataParallel
-from dan.detection.center_checkpoint import load_model, save_model
+from dan.data import DataParallel, CigBox
+from dan.detection.utils import load_model, save_model
 from dan.detection.detectors.center import CtdetDetector
 
-from dan.design.config import Config
-# from centernet.configs import res18_centernet
-from .builder import build_heatmap
+from dan.design import Config
+from dan.detection.builder import build_heatmap
 
 
 def main(opt):
@@ -49,7 +45,7 @@ def main(opt):
     trainer.set_device(opt.gpus, opt.chunk_sizes, opt.device)
 
     print('Setting up data...')
-    val_loader = torch.utils.data.DataLoader(Dataset(opt, 'val'),
+    val_loader = DataLoader(Dataset(opt, 'val'),
                                              batch_size=1,
                                              shuffle=False,
                                              num_workers=1,
@@ -60,7 +56,7 @@ def main(opt):
         val_loader.dataset.run_eval(preds, opt.save_dir)
         return
 
-    train_loader = torch.utils.data.DataLoader(Dataset(opt, 'train'),
+    train_loader = DataLoader(Dataset(opt, 'train'),
                                                batch_size=opt.batch_size,
                                                shuffle=True,
                                                num_workers=opt.num_workers,
@@ -104,6 +100,10 @@ def main(opt):
 
 #   logger.close()
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
+#     opt = opts().parse()
+#     main(opt)
+
+def train_centernet():
     opt = opts().parse()
     main(opt)
