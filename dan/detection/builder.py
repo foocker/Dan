@@ -3,6 +3,7 @@ from torch import nn
 
 BACKBONES = Registry('backbone')
 NECKS = Registry('neck')
+PLUGINS = Registry('plugin')
 HEADS = Registry('head')
 HEATMAP = Registry('heatmap')
 LOSSES = Registry('loss')
@@ -34,6 +35,11 @@ def build(cfg, registry, default_args=None):
 def build_backbone(cfg):
     """Build backbone."""
     return build(cfg, BACKBONES)
+
+
+def build_plugin(cfg):
+    """Build plugin."""
+    return build(cfg, PLUGINS)
 
 
 def build_neck(cfg):

@@ -100,10 +100,12 @@ def main(opt):
 
 #   logger.close()
 
-# if __name__ == '__main__':
-#     opt = opts().parse()
-#     main(opt)
-
 def train_centernet():
     opt = opts().parse()
     main(opt)
+    
+
+if __name__ == '__main__':
+    opt = opts().parse()
+    main(opt)
+

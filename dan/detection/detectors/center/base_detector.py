@@ -7,7 +7,7 @@ from dan.detection.utils import load_model
 from dan.detection.core.center.image import get_affine_transform
 from dan.detection.utils.debugger import Debugger
 
-from dan.design.config import Config
+from dan.design import Config
 from dan.detection.builder import build_heatmap
 
 
@@ -21,7 +21,7 @@ class BaseDetector(object):
         print('Creating model...')
         # self.model = create_model(opt.arch, opt.heads, opt.head_conv)
         cfg = Config.fromfile(opt.config)
-        self.model = build_heatmap(cfg)  # ???
+        self.model = build_heatmap(cfg)  #
         # i should split the restnet and deconv_layer(heathead), these two strcut handle as backbone will be simple
         self.model = load_model(self.model, opt.load_model)
         self.model = self.model.to(opt.device)
