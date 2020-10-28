@@ -16,7 +16,7 @@ model = dict(
 )
 train_cfg = dict(
     cfg_detct={
-        'anchor_sizes': '',
+    'anchor_sizes': '',
     'aspect_ratios': '',
     'anchor_strides': '',
     'straddle_thresh': '',
