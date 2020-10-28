@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(
         name='dan',
         version=0.1,
-        description='Open MMLab Detection Toolbox and Benchmark',
+        description='dan furnace',
         # long_description=readme(),
         author='GG',
         author_email='fengqian1991@gmail.com',
