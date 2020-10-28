@@ -56,8 +56,8 @@ for img in imgs:
             w = box[2]
             h = box[3]
             x = round(x * dw, 3)
-            w = round(w * dw, 3)
             y = round(y * dh, 3)
+            w = round(w * dw, 3)
             h = round(h * dh, 3)
             strs = "{} {} {} {} {}\n".format(classId, x, y, w, h)
             # print(str)
