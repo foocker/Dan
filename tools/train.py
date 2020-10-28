@@ -1,0 +1,1 @@
+from dan.detection import train_centernet
