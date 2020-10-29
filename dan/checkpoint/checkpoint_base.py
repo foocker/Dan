@@ -51,19 +51,21 @@ class Checkpointer(object):
 
         basename = "{}.pth".format(name)
         save_file = os.path.join(self.save_dir, basename)
-        assert os.path.basename(save_file) == basename, basename    # ?
-        with open(save_file, "wb") as f:    # may some problem?
+        assert os.path.basename(save_file) == basename, basename  # ?
+        with open(save_file, "wb") as f:  # may some problem?
             torch.save(data, f)
         self.tag_last_checkpoint(basename)
 
     def load(self, path: str):
         if not path:
-            self.logger.info("No checkpoint found. Initializing model from scratch")
+            self.logger.info(
+                "No checkpoint found. Initializing model from scratch")
             return {}
         self.logger.info("Loading checkpoint from {}".format(path))
         if not os.path.isfile(path):
             # may get the whole path
-            assert os.path.isfile(path), "Checkpoint {} not found!".format(path)
+            assert os.path.isfile(path), "Checkpoint {} not found!".format(
+                path)
         checkpoint = self._load_file(path)
         self._load_model(checkpoint)
         for key, obj in self.checkpointables.items():
@@ -142,14 +144,11 @@ class Checkpointer(object):
                 if shape_model != shape_checkpoint:
                     self.logger.warning(
                         "'{}' has shape {} in the checkpoint but {} in the "
-                        "model! Skipped.".format(
-                            k, shape_checkpoint, shape_model
-                        )
-                    )
+                        "model! Skipped.".format(k, shape_checkpoint,
+                                                 shape_model))
                     checkpoint_state_dict.pop(k)
-        incompatible = self.model.load_state_dict(
-            checkpoint_state_dict, strict=False
-        )
+        incompatible = self.model.load_state_dict(checkpoint_state_dict,
+                                                  strict=False)
         # can do some check for the incompatible
 
     def _convert_ndarray_to_tensor(self, state_dict: dict):
@@ -163,9 +162,11 @@ class Checkpointer(object):
         # properties.
         for k in list(state_dict.keys()):
             v = state_dict[k]
-            if not isinstance(v, np.ndarray) and not isinstance(v, torch.Tensor):
-                raise ValueError("Unsupported type found in checkpoint! {}: {}".format(k, type(v))
-                                 )
+            if not isinstance(v, np.ndarray) and not isinstance(
+                    v, torch.Tensor):
+                raise ValueError(
+                    "Unsupported type found in checkpoint! {}: {}".format(
+                        k, type(v)))
             if not isinstance(v, torch.Tensor):
                 state_dict[k] = torch.from_numpy(v)
 
@@ -194,7 +195,8 @@ class PeriodicCheckpointer:
         additional_state = {"iteration": iteration}
         additional_state.update(kwargs)
         if (iteration + 1) % self.period == 0:
-            self.checkpointer.save("model_{:07d}".format(iteration), **additional_state)
+            self.checkpointer.save("model_{:07d}".format(iteration),
+                                   **additional_state)
         if iteration >= self.max_iter - 1:
             self.checkpointer.save("model_final", **additional_state)
 
@@ -231,9 +233,3 @@ def _strip_prefix_if_present(state_dict: collections.OrderedDict, prefix: str):
                 continue
             newkey = key[len(prefix):]
             metadata[newkey] = metadata.pop(key)
-
-
-
-
-
-

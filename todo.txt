@@ -1,2 +1,12 @@
-analysis中的gradcam
-detectors\center cdet.py nms make if need.
+基本说明：
+    1、配置系统采用mm的config，在design
+    2、模型采用mm中的注册形式，在design中
+    3、数据在data中，采用统一写法
+    4、训练以各个开源代码为基础
+    5、不同算法的共同之处合并
+    6、模型保存先尽量用checkpoint的方式
+计划：
+    1. yolov5
+    2. retinaface,yolact(这两个是ssd架构，符合“基本说明5”)
+    3.https://github.com/open-mmlab/mmclassification中的分类模型
+    4.cpp,cuda部分(ops)
