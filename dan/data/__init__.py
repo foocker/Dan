@@ -1,2 +1,3 @@
-from .distributed_data import DataParallel, scatter_kwargs
 from .cig_box import CigBox
+from .coco import CocoDataset
+from .wider_face import WiderFaceDetection

@@ -1,6 +1,7 @@
 import torch.nn.functional as F
 from .baseblock import conv_bn1x1, conv_bn
 from ..builder import NECKS
+from torch import nn
 
 
 @NECKS.register_module()

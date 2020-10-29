@@ -3,17 +3,18 @@ model = dict(
     backbone=dict(
         type='MobileNetV1',
     ),
+    return_layers={'stage1': 1, 'stage2': 2, 'stage3': 3},
     neck=dict(
         type='FPN',
         in_channels_list=[32*2, 32*4, 32*8],
-        out_channels=64,
+        out_channels=64
     ),
     plugin=dict(
         type='SSH',
         in_channel=64,
-        out_chanel=64,
+        out_channel=64)
     )
-)
+
 train_cfg = dict(
     cfg_detct={
     'anchor_sizes': '',
@@ -26,8 +27,19 @@ train_cfg = dict(
     'scales': [2**0, 2**(1.0/3), 2**(2.0/3)],
     'pyramid_levels': [3, 4, 5]
     },
-    
+    phase='train',
+    scene='face',
     xx = {
+    'min_sizes': [[16, 32], [64, 128], [256, 512]],
+    'steps': [8, 16, 32],
+    'variance': [0.1, 0.2],
+    'clip': False,
+    
+    'scales_per_octave': 3,
+    'ratios': [0.5, 1, 2],
+    'scales': [2 ** 0, 2 ** (1.0 / 3), 2 ** (2.0 / 3)],
+    'pyramid_levels': [3, 4, 5],
+    
     # train
     'loc_weight': 2.0,
     'gpu_train': True,

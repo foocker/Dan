@@ -8,7 +8,7 @@ from torch.utils import data
 from torchvision import datasets, transforms
 from PIL import Image
 
-from classifier.benchmark import config as cfg
+from ..classifier import config as cfg
 
 # when install will change .. to Synthesize
 

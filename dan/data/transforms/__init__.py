@@ -1,2 +1,1 @@
-from .augment.albuaug import get_augumentation
-from .augment.faceaug import preproc
+from .augment import get_augumentation, preproc

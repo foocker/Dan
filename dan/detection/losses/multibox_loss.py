@@ -2,8 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from ..utils.ssd_box_utils import match, log_sum_exp
-# from detection.configs.face_config import cfg_mobile as cfg
-# GPU = cfg['gpu_train']    # change
 GPU = True
 
 from ..builder import LOSSES

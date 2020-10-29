@@ -98,6 +98,8 @@ class SSH(nn.Module):
         leaky = 0
         if out_channel <= 64:
             leaky = 0.1
+        # self.in_channel = in_channel
+        # self.out_channel = out_channel
         self.conv3X3 = conv_bn_no_relu(in_channel, out_channel // 2, stride=1)
 
         self.conv5X5_1 = conv_bn(in_channel,

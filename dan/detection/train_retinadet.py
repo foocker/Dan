@@ -3,40 +3,43 @@ import os
 import torch
 from torch import optim
 from torch.utils import data
-from dan.data.wider_face import WiderFaceDetection, detection_collate
+# from dan.data.wider_face import WiderFaceDetection, detection_collate
 from dan.data.transforms import preproc, get_augumentation
 from dan.design import Config
-# from .losses.multibox_loss import MultiBoxLoss
-from .builder import build_loss, build_detector
+from dan.detection.losses.multibox_loss import MultiBoxLoss
+from dan.detection.core.anchors.prior_box import PriorBox
+from dan.detection.builder import build_loss, build_detector
 from dan.data.coco import CocoDataset, coco_collate
+from dan.detection.detectors import RetinaDet   # ? why must import at here
 
 import time
 import datetime
 import math
 
-cfg = Config.filename('config_path')
+cfg = Config.fromfile('/root/Codes/Dan/dan/detection/config/face_config.py')
 
-print('base cfg name is {}.'.format(cfg['name']))
-rgb_mean = cfg['rgb_means']
-num_classes = cfg['num_classes']
-img_dim = cfg['image_size']
-num_gpu = cfg['ngpu']
-batch_size = cfg['batch_size']
-max_epoch = cfg['epoch']
-gpu_train = cfg['gpu_train']
 
-num_workers = cfg['num_workers']
-momentum = cfg['momentum']
-weight_decay = cfg['weight_decay']
-initial_lr = cfg['lr']
-gamma = cfg['gamma']
-training_label = cfg['training_label']
-training_dataset = cfg['training_dataset']
-save_weights = cfg['save_weights']
-weights_label = cfg['weights_label']
-resume_epoch = cfg['resume_epoch']
+# print('base cfg name is {}.'.format(cfg['name']))
+rgb_mean = cfg.train_cfg.xx['rgb_means']
+num_classes = cfg.train_cfg.xx['num_classes']
+img_dim = cfg.train_cfg.xx['image_size']
+num_gpu = cfg.train_cfg.xx['ngpu']
+batch_size = cfg.train_cfg.xx['batch_size']
+max_epoch = cfg.train_cfg.xx['epoch']
+gpu_train = cfg.train_cfg.xx['gpu_train']
 
-net = build_detector(cfg)
+num_workers = cfg.train_cfg.xx['num_workers']
+momentum = cfg.train_cfg.xx['momentum']
+weight_decay = cfg.train_cfg.xx['weight_decay']
+initial_lr = cfg.train_cfg.xx['lr']
+gamma = cfg.train_cfg.xx['gamma']
+training_label = cfg.train_cfg.xx['training_label']
+training_dataset = cfg.train_cfg.xx['training_dataset']
+save_weights = cfg.train_cfg.xx['save_weights']
+weights_label = cfg.train_cfg.xx['weights_label']
+resume_epoch = cfg.train_cfg.xx['resume_epoch']
+
+net = build_detector(cfg.model, train_cfg=cfg.train_cfg, test_cfg=cfg.test_cfg)
 # net = cfg['net'](cfg=cfg, phase='train', scene='general')
 net = net.to('cuda')
 
@@ -51,11 +54,11 @@ optimizer = optim.SGD(net.parameters(),
                       lr=initial_lr,
                       momentum=momentum,
                       weight_decay=weight_decay)
-# criterion = MultiBoxLoss(num_classes, 0.35, True, 0, True, 7, 0.3, False)
+criterion = MultiBoxLoss(num_classes, 0.35, True, 0, True, 7, 0.3, False)
 
-criterion = build_loss(cfg)
+# criterion = build_loss(cfg)
 
-priorboxs = cfg['pribox'](cfg, image_size=(img_dim, img_dim))
+priorboxs = PriorBox(cfg.train_cfg.xx, image_size=(img_dim, img_dim))
 # priorboxs = cfg['pribox'](cfg, image_size=(img_dim, img_dim), box_normalize=False)    # when data loader not normalize box
 with torch.no_grad():
     priors = priorboxs.forward()
@@ -81,7 +84,7 @@ def train():
     epoch_size = math.ceil(len(dataset) / batch_size)
     max_iter = max_epoch * epoch_size
 
-    stepvalues = (cfg['decay1'] * epoch_size, cfg['decay2'] * epoch_size)
+    stepvalues = (cfg.train_cfg.xx['decay1'] * epoch_size, cfg.train_cfg.xx['decay2'] * epoch_size)
     step_index = 0
 
     if resume_epoch > 0:
@@ -98,11 +101,11 @@ def train():
                                 num_workers=num_workers,
                                 collate_fn=coco_collate))
             if (epoch % 80 == 0 and epoch > 0) or (epoch % 80 == 0
-                                                   and epoch > cfg['decay1']):
+                                                   and epoch > cfg.train_cfg.xx['decay1']):
                 torch.save(
                     net.state_dict(),
                     os.path.join(
-                        save_weights, cfg['name'] + weights_label + 'epoch_' +
+                        save_weights, cfg.train_cfg.xx['name'] + weights_label + 'epoch_' +
                         str(epoch) + '.pth'))
             epoch += 1
 
@@ -119,13 +122,14 @@ def train():
         targets = [anno.to('cuda') for anno in targets]
 
         out = net(imgs)
+        # print(out[0].shape)
 
         optimizer.zero_grad()
         loss_l, loss_c, loss_landm = criterion(out, priors, targets)
         if loss_landm is not None:
-            loss = cfg['loc_weight'] * loss_l + loss_c + loss_landm
+            loss = cfg.train_cfg.xx['loc_weight'] * loss_l + loss_c + loss_landm
         else:
-            loss = cfg['loc_weight'] * loss_l + loss_c
+            loss = cfg.train_cfg.xx['loc_weight'] * loss_l + loss_c
         loss.backward()
         optimizer.step()
         load_end = time.time()
@@ -143,7 +147,7 @@ def train():
                 str(datetime.timedelta(seconds=eta))))
 
     torch.save(net.state_dict(),
-               os.path.join(save_weights, cfg['name'] + '_Final.pth'))
+               os.path.join(save_weights, cfg.train_cfg.xx['name'] + '_Final.pth'))
 
 
 def adujst_learning_rate(optimizer, gamma, epoch, step_index, iteration,
@@ -161,3 +165,7 @@ def adujst_learning_rate(optimizer, gamma, epoch, step_index, iteration,
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     return lr
+
+
+if __name__ == "__main__":
+    train()
