@@ -10,3 +10,4 @@
     2. retinaface,yolact(这两个是ssd架构，符合“基本说明5”)
     3.https://github.com/open-mmlab/mmclassification中的分类模型
     4.cpp,cuda部分(ops)
+    5. GAN相关，参考docs里面的gan.pdf
