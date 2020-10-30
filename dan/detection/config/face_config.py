@@ -28,7 +28,7 @@ train_cfg = dict(
     'pyramid_levels': [3, 4, 5]
     },
     phase='train',
-    scene='face',
+    scene='general',
     xx = {
     'min_sizes': [[16, 32], [64, 128], [256, 512]],
     'steps': [8, 16, 32],
