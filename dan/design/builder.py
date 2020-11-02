@@ -1,4 +1,4 @@
-from dan.design.registry import Registry, build_from_cfg
+from .registry import Registry, build_from_cfg
 from torch import nn
 
 BACKBONES = Registry('backbone')
@@ -7,6 +7,7 @@ PLUGINS = Registry('plugin')
 HEADS = Registry('head')
 HEATMAP = Registry('heatmap')
 LOSSES = Registry('loss')
+CLASSIFIER = Registry('classifier')
 DETECTORS = Registry('detector')
 
 
@@ -63,3 +64,8 @@ def build_loss(cfg):
 def build_detector(cfg, train_cfg=None, test_cfg=None):
     """Build detector."""
     return build(cfg, DETECTORS, dict(train_cfg=train_cfg, test_cfg=test_cfg))
+
+
+def build_classifier(cfg, train_cfg=None, test_cfg=None):
+    """Build classifier."""
+    return build(cfg, CLASSIFIER, dict(train_cfg=train_cfg, test_cfg=test_cfg))

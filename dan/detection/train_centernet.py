@@ -9,7 +9,7 @@ from dan.detection.utils import load_model, save_model
 from dan.detection.detectors.center import CtdetDetector
 
 from dan.design import Config
-from dan.detection.builder import build_heatmap
+from dan.design.builder import build_heatmap
 
 
 def main(opt):

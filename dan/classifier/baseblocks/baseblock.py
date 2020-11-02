@@ -3,10 +3,105 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..builder import BACKBONES, PLUGINS
+
+# ------- resnet --------
+def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
+    """3x3 convolution with padding"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
+                     padding=dilation, groups=groups, bias=False, dilation=dilation)
 
 
-# just combine classic basic operator to create functional module
+def conv1x1(in_planes, out_planes, stride=1):
+    """1x1 convolution"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
+
+
+class BasicBlock(nn.Module):
+    expansion = 1
+
+    def __init__(self, inplanes, planes, stride=1, downsample=None, groups=1,
+                 base_width=64, dilation=1, norm_layer=None):
+        super(BasicBlock, self).__init__()
+        if norm_layer is None:
+            norm_layer = nn.BatchNorm2d
+        if groups != 1 or base_width != 64:
+            raise ValueError('BasicBlock only supports groups=1 and base_width=64')
+        if dilation > 1:
+            raise NotImplementedError("Dilation > 1 not supported in BasicBlock")
+        # Both self.conv1 and self.downsample layers downsample the input when stride != 1
+        self.conv1 = conv3x3(inplanes, planes, stride)
+        self.bn1 = norm_layer(planes)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2 = conv3x3(planes, planes)
+        self.bn2 = norm_layer(planes)
+        self.downsample = downsample
+        self.stride = stride
+
+    def forward(self, x):
+        identity = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+
+        if self.downsample is not None:
+            identity = self.downsample(x)
+
+        out += identity
+        out = self.relu(out)
+
+        return out
+
+
+class Bottleneck(nn.Module):
+    expansion = 4
+
+    def __init__(self, inplanes, planes, stride=1, downsample=None, groups=1,
+                 base_width=64, dilation=1, norm_layer=None):
+        super(Bottleneck, self).__init__()
+        if norm_layer is None:
+            norm_layer = nn.BatchNorm2d
+        width = int(planes * (base_width / 64.)) * groups
+        # Both self.conv2 and self.downsample layers downsample the input when stride != 1
+        self.conv1 = conv1x1(inplanes, width)
+        self.bn1 = norm_layer(width)
+        self.conv2 = conv3x3(width, width, stride, groups, dilation)
+        self.bn2 = norm_layer(width)
+        self.conv3 = conv1x1(width, planes * self.expansion)
+        self.bn3 = norm_layer(planes * self.expansion)
+        self.relu = nn.ReLU(inplace=True)
+        self.downsample = downsample
+        self.stride = stride
+
+    def forward(self, x):
+        identity = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+        out = self.relu(out)
+
+        out = self.conv3(out)
+        out = self.bn3(out)
+
+        if self.downsample is not None:
+            identity = self.downsample(x)
+
+        out += identity
+        out = self.relu(out)
+
+        return out
+
+# ------- resnet --------
+
+
+# ------- retina --------
 def conv_bn(inc, ouc, stride=1, leaky=0):
     return nn.Sequential(nn.Conv2d(inc, ouc, 3, stride, 1, bias=False),
                          nn.BatchNorm2d(ouc),
@@ -42,6 +137,8 @@ class BasicConv2d(nn.Module):
         x = self.conv(x)
         x = self.bn(x)
         return F.relu(x, inplace=True)
+
+# ------- retina --------
 
 
 # classic functional module, but just for some special network, not auto dynamic
@@ -87,84 +184,4 @@ class CRelu(nn.Module):
         x = self.bn(x)
         x = torch.cat([x, -x], 1)
         x = F.relu(x, inplace=True)
-        return x
-
-
-@PLUGINS.register_module()
-class SSH(nn.Module):
-    def __init__(self, in_channel, out_channel):
-        super(SSH, self).__init__()
-        assert out_channel % 4 == 0
-        leaky = 0
-        if out_channel <= 64:
-            leaky = 0.1
-        # self.in_channel = in_channel
-        # self.out_channel = out_channel
-        self.conv3X3 = conv_bn_no_relu(in_channel, out_channel // 2, stride=1)
-
-        self.conv5X5_1 = conv_bn(in_channel,
-                                 out_channel // 4,
-                                 stride=1,
-                                 leaky=leaky)
-        self.conv5X5_2 = conv_bn_no_relu(out_channel // 4,
-                                         out_channel // 4,
-                                         stride=1)
-
-        self.conv7X7_2 = conv_bn(out_channel // 4,
-                                 out_channel // 4,
-                                 stride=1,
-                                 leaky=leaky)
-        self.conv7x7_3 = conv_bn_no_relu(out_channel // 4,
-                                         out_channel // 4,
-                                         stride=1)
-
-    def forward(self, input):
-        conv3X3 = self.conv3X3(input)
-
-        conv5X5_1 = self.conv5X5_1(input)
-        conv5X5 = self.conv5X5_2(conv5X5_1)
-
-        conv7X7_2 = self.conv7X7_2(conv5X5_1)
-        conv7X7 = self.conv7x7_3(conv7X7_2)
-
-        out = torch.cat([conv3X3, conv5X5, conv7X7], dim=1)
-        out = F.relu(out)
-        return out
-
-
-@BACKBONES.register_module()
-class MobileNetV1(nn.Module):
-    def __init__(self):
-        super(MobileNetV1, self).__init__()
-        self.stage1 = nn.Sequential(
-            conv_bn(3, 8, 2, leaky=0.1),  # 3
-            conv_dw(8, 16, 1),  # 7
-            conv_dw(16, 32, 2),  # 11
-            conv_dw(32, 32, 1),  # 19
-            conv_dw(32, 64, 2),  # 27
-            conv_dw(64, 64, 1),  # 43
-        )
-        self.stage2 = nn.Sequential(
-            conv_dw(64, 128, 2),  # 43 + 16 = 59
-            conv_dw(128, 128, 1),  # 59 + 32 = 91
-            conv_dw(128, 128, 1),  # 91 + 32 = 123
-            conv_dw(128, 128, 1),  # 123 + 32 = 155
-            conv_dw(128, 128, 1),  # 155 + 32 = 187
-            conv_dw(128, 128, 1),  # 187 + 32 = 219
-        )
-        self.stage3 = nn.Sequential(
-            conv_dw(128, 256, 2),  # 219 +3 2 = 241
-            conv_dw(256, 256, 1),  # 241 + 64 = 301
-        )
-        self.avg = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(256, 1000)
-
-    def forward(self, x):
-        x = self.stage1(x)
-        x = self.stage2(x)
-        x = self.stage3(x)
-        x = self.avg(x)
-        # x = self.model(x)
-        x = x.view(-1, 256)
-        x = self.fc(x)
         return x

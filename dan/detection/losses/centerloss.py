@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..builder import LOSSES
+from dan.design.builder import LOSSES
 from ..core.center.utils import _transpose_and_gather_feat
 
 def _neg_loss(pred, gt):

@@ -3,7 +3,7 @@ from torch import nn
 
 from dan.detection.backbones import ResNett
 from dan.detection.heads import HeatHead
-from dan.detection.builder import HEATMAP, build_backbone, build_head
+from dan.design.builder import HEATMAP, build_backbone, build_head
 
 
 @HEATMAP.register_module()

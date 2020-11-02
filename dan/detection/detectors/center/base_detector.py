@@ -7,8 +7,7 @@ from dan.detection.utils import load_model
 from dan.detection.core.center.image import get_affine_transform
 from dan.detection.utils.debugger import Debugger
 
-from dan.design import Config
-from dan.detection.builder import build_heatmap
+from dan.design import Config, build_heatmap
 
 
 class BaseDetector(object):

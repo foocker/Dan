@@ -1,6 +1,5 @@
 import torch.nn as nn
-from ..builder import build_backbone, build_plugin, build_neck, DETECTORS
-from ..netblocks import MobileNetV1
+from dan.design.builder import build_backbone, build_plugin, build_neck, DETECTORS
 import torch
 from torchvision.models import _utils
 
@@ -42,18 +41,19 @@ class LandmarkHead(nn.Module):
 
 @DETECTORS.register_module()
 class RetinaDet(nn.Module):
-    def __init__(self, backbone, return_layers,  neck=None, plugin=None, train_cfg=None, test_cfg=None):
+    def __init__(self, backbone, neck=None, plugin=None, train_cfg=None, test_cfg=None):
         # assert scene in ('face', 'ocr', 'general'), 'scene:{} is not support'.format(scene)
         super(RetinaDet, self).__init__()
         self.phase = train_cfg.phase
         self.scene = train_cfg.scene
         self.num_stages = 3  # 3, 4: small, mid, big
         self.anchor_num = 2   # diverse: face, general, word, different scene  
-        self.return_layers = return_layers
+        # self.return_layers = return_layers
         self.out_channels = 64
         self.backbone = build_backbone(backbone)
         
-        self.body = _utils.IntermediateLayerGetter(self.backbone, self.return_layers) 
+        # self.body = _utils.IntermediateLayerGetter(self.backbone, self.return_layers)   # from a classifier 
+        self.body = self.backbone
 
         self.neck = build_neck(neck)
         

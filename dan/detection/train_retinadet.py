@@ -8,16 +8,15 @@ from dan.data.transforms import preproc, get_augumentation
 from dan.design import Config
 from dan.detection.losses.multibox_loss import MultiBoxLoss
 from dan.detection.core.anchors.prior_box import PriorBox
-from dan.detection.builder import build_loss, build_detector
+from dan.design.builder import build_loss, build_detector
 from dan.data.coco import CocoDataset, coco_collate
-from dan.detection.detectors import RetinaDet   # ? why must import at here
+from dan.detection.detectors import RetinaDet  # ? why must import at here
 
 import time
 import datetime
 import math
 
 cfg = Config.fromfile('/root/Codes/Dan/dan/detection/config/face_config.py')
-
 
 # print('base cfg name is {}.'.format(cfg['name']))
 rgb_mean = cfg.train_cfg.xx['rgb_means']
@@ -84,7 +83,8 @@ def train():
     epoch_size = math.ceil(len(dataset) / batch_size)
     max_iter = max_epoch * epoch_size
 
-    stepvalues = (cfg.train_cfg.xx['decay1'] * epoch_size, cfg.train_cfg.xx['decay2'] * epoch_size)
+    stepvalues = (cfg.train_cfg.xx['decay1'] * epoch_size,
+                  cfg.train_cfg.xx['decay2'] * epoch_size)
     step_index = 0
 
     if resume_epoch > 0:
@@ -100,13 +100,14 @@ def train():
                                 shuffle=True,
                                 num_workers=num_workers,
                                 collate_fn=coco_collate))
-            if (epoch % 80 == 0 and epoch > 0) or (epoch % 80 == 0
-                                                   and epoch > cfg.train_cfg.xx['decay1']):
+            if (epoch % 80 == 0
+                    and epoch > 0) or (epoch % 80 == 0
+                                       and epoch > cfg.train_cfg.xx['decay1']):
                 torch.save(
                     net.state_dict(),
                     os.path.join(
-                        save_weights, cfg.train_cfg.xx['name'] + weights_label + 'epoch_' +
-                        str(epoch) + '.pth'))
+                        save_weights, cfg.train_cfg.xx['name'] +
+                        weights_label + 'epoch_' + str(epoch) + '.pth'))
             epoch += 1
 
         load_start = time.time()
@@ -146,8 +147,9 @@ def train():
                 max_iter, loss_l.item(), loss_c.item(), lr, batch_time,
                 str(datetime.timedelta(seconds=eta))))
 
-    torch.save(net.state_dict(),
-               os.path.join(save_weights, cfg.train_cfg.xx['name'] + '_Final.pth'))
+    torch.save(
+        net.state_dict(),
+        os.path.join(save_weights, cfg.train_cfg.xx['name'] + '_Final.pth'))
 
 
 def adujst_learning_rate(optimizer, gamma, epoch, step_index, iteration,
