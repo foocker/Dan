@@ -3,7 +3,7 @@ model = dict(
     backbone=dict(
         type='MobileBackboneV1',
     ),
-    # return_layers={'stage1': 1, 'stage2': 2, 'stage3': 3},
+    return_layers={'stage1': 1, 'stage2': 2, 'stage3': 3},
     neck=dict(
         type='FPN',
         in_channels_list=[32*2, 32*4, 32*8],

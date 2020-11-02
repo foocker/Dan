@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 from dan.classifier.baseblocks import *
 
-from ..builder import PLUGINS
+from dan.design.builder import PLUGINS
 
 
 @PLUGINS.register_module()
