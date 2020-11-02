@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from ..utils.ssd_box_utils import match, log_sum_exp
 GPU = True
 
-from ..builder import LOSSES
+from dan.design.builder import LOSSES
 
 
 @LOSSES.register_module()
