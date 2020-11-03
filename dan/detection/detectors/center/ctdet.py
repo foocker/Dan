@@ -18,7 +18,7 @@ from dan.detection.utils.debugger import Debugger
 
 from .base_detector import BaseDetector
 
-from dan.detection.builder import DETECTORS
+from dan.design.builder import DETECTORS
 
 
 @DETECTORS.register_module()

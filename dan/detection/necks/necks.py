@@ -19,7 +19,7 @@ class FPN(nn.Module):
         self.merge2 = conv_bn(out_channels, out_channels, leaky=leaky)
 
     def forward(self, input):
-        input = list(input.values())
+        input = list(input.values())   # _utils.IntermediateLayerGetter,torchvision.models._utils
         output1 = self.output1(input[0])
         output2 = self.output2(input[1])
         output3 = self.output3(input[2])

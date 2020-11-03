@@ -2,9 +2,8 @@ import torch.nn as nn
 from dan.design.builder import build_backbone, build_plugin, build_neck, DETECTORS
 import torch
 from torchvision.models import _utils
-from dan.classifier.backbones import MobileBackboneV1
+from dan.classifier.backbones import MobileBackboneV1   # remove
 from dan.detection.necks import FPN, SSH
-
 
 
 class ClassHead(nn.Module):

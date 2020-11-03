@@ -2,7 +2,7 @@ import math
 import torch
 import torch.nn as nn
 
-from ..builder import HEADS
+from dan.design.builder import HEADS
 # from ..backbones import BN_MOMENTUM
 
 BN_MOMENTUM = 0.1
