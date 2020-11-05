@@ -46,7 +46,12 @@ class labelme2coco(object):
                 data = json.load(fp)
                 self.images.append(self.image(data, num))
                 for shapes in data["shapes"]:
-                    label = shapes["label"].split("_")
+                    # if shapes["label"] == "person":
+                    #     label = "guest"
+                    #     print(label, "1")
+                    # else:
+                    #     label = shapes["label"]
+                    label = shapes["label"]
                     if label not in self.label:
                         self.label.append(label)
                     points = shapes["points"]
@@ -80,9 +85,10 @@ class labelme2coco(object):
 
     def category(self, label):
         category = {}
-        category["supercategory"] = label[0]
+        # category["supercategory"] = label[0]
+        category["supercategory"] = label
         category["id"] = len(self.categories)
-        category["name"] = label[0]
+        category["name"] = label
         return category
 
     def annotation(self, points, label, num):
@@ -98,7 +104,8 @@ class labelme2coco(object):
 
         annotation["bbox"] = list(map(float, self.getbbox(points)))
 
-        annotation["category_id"] = label[0]  # self.getcatid(label)
+        # annotation["category_id"] = label[0]  # self.getcatid(label)
+        annotation["category_id"] = label  # self.getcatid(label)
         annotation["id"] = self.annID
         return annotation
 
