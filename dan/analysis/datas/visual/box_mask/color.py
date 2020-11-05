@@ -3,7 +3,7 @@ from enum import Enum
 
 import numpy as np
 
-from design.utils.path import is_str
+from dan.design.utils.path import is_str
 
 
 class Color(Enum):

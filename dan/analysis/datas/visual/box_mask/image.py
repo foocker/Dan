@@ -2,7 +2,7 @@
 import cv2
 import numpy as np
 
-from data.image import imread, imwrite
+from dan.data.image import imread, imwrite
 from .color import color_val
 
 

@@ -1,9 +1,3 @@
-# 找到预测类的响应图，并对其进行上采样以适合原始图像。我们对响应图进行阈值处理以
-# 获得感兴趣的区域并在其周围找到一个边界框
-
-# 在原始的ResNet中，输出是1000个元素的向量，其中向量的每个元素对应于ImageNet的1000个类的类概率。
-
-# 在FC的版本中，我们得到一个大小为[1，1000，n，m]的响应图，其中n和m取决于原始图像的大小和网络本身。
 import cv2
 import numpy as np
 
@@ -29,7 +23,7 @@ def heat_rect(preds, predicted_class, original_image):
     score_map = score_map - np.min(score_map[:])
     score_map = score_map / np.max(score_map[:])
 
-    # 接下来，我们将响应图与原始图像相乘并显示边界框。
+    # correspond times original
     score_map = cv2.cvtColor(score_map, cv2.COLOR_GRAY2BGR)
     masked_image = (original_image * score_map).astype(np.uint8)
 

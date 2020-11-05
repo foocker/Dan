@@ -1,4 +1,4 @@
-from .models.resnet_primary import create_model, get_params_to_update, reusemodel, progressive_model
+from .models.resnetprim import create_model, get_params_to_update, reusemodel, progressive_model
 from .config import res_config as cfg
 
 from dan.data.classify_data import train_val_dataset, dataloaders_dict

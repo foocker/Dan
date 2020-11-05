@@ -6,7 +6,7 @@ from PIL import Image
 import numpy as np
 import torch
 
-from classifier.benchmark import config as cfg
+from dan.classifier import config as cfg
 
 from .misc_functions import get_example_params, get_example_list
 from .misc_functions import get_model_w, save_class_activation_images

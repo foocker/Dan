@@ -2,7 +2,7 @@ import os
 import cv2
 import torch
 from PIL import Image
-from ..models.primary_resnet import create_model
+from ..models.resnetprim import create_model
 from matplotlib import pyplot as plt
 from ..config import num_class, weight_path, classes
 from dan.data.classify_data import data_train_val_trainsform
@@ -34,6 +34,9 @@ def get_model():
     model.eval()
     return model
 
+
+def get_features():
+    pass
 
 model = get_model()
 model = model.to('cuda')
@@ -74,3 +77,4 @@ def inference(file_path, threshold=0.65, show=False):
         print(h, w)
         cv2.imwrite('./' + os.path.basename(file_path), img_array)
     return data_class
+

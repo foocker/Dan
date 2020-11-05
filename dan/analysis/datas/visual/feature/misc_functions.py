@@ -13,8 +13,8 @@ import torch
 from torch.autograd import Variable
 from torchvision import models
 
-from classifier.benchmark import config as cfg
-from classifier.benchmark.model import create_model, reusemodel
+from dan.classifier import config as cfg
+from dan.classifier.models.resnetprim import create_model, reusemodel
 
 
 
