@@ -2,8 +2,8 @@ import copy
 
 import matplotlib.pyplot as plt
 import numpy as np
-from volkscv.utils.cocoapi.pycocotools.coco import COCO
-from volkscv.utils.cocoapi.pycocotools.cocoeval import COCOeval
+from pycocotools.coco import COCO
+from pycocotools.cocoeval import COCOeval
 
 from .base import BaseProcessor
 from ..plotter import TwoDimPlotter, Compose

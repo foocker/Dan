@@ -8,8 +8,8 @@ import torch
 from PIL import Image
 from matplotlib import pyplot as plt
 
-from ...utils.geos import bbox_overlaps
-from ...utils.paths import read_imglist
+from ..utils.geos import bbox_overlaps
+from ..utils.paths import read_imglist
 
 
 def save_img(save_path, img):
