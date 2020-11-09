@@ -1,8 +1,8 @@
 ## Support
-- [x] [AveragePrecision](https://github.com/Media-Smart/volkscv/blob/master/volkscv/metrics/detection/average_precision.py)
-- [x] [AverageRecall](https://github.com/Media-Smart/volkscv/blob/master/volkscv/metrics/detection/average_recall.py)
-- [x] [PRCurve](https://github.com/Media-Smart/volkscv/blob/master/volkscv/metrics/detection/pr_curve.py)
-- [x] [SupercatePRCurve](https://github.com/Media-Smart/volkscv/blob/master/volkscv/metrics/detection/pr_curve.py)
+- [x] [AveragePrecision](performace/detection/average_precision.py)
+- [x] [AverageRecall](performace/detection/average_recall.py)
+- [x] [PRCurve](performace/detection/pr_curve.py)
+- [x] [SupercatePRCurve](performace/detection/pr_curve.py)
 
 ## Usage
 ### Known Issues
@@ -42,7 +42,7 @@
 Take ap30, ap50, map for example in pytorch detection evaluation:
 
 ```shell
-from volkscv.metrics.detection import AveragePrecision
+from dan.analysis.performance.detection import AveragePrecision
 
 for epoch in range(num_max_epoch):
     ap = AveragePrecision(iou=[0.3, 0.5])
@@ -73,7 +73,7 @@ for epoch in range(num_max_epoch):
 
 ```
 
-## Contact
+## State
 
 This repository is currently maintained by Chenhao Wang ([@C-H-Wong](http://github.com/C-H-Wong)), Hongxiang Cai ([@hxcai](http://github.com/hxcai)), Yichao Xiong ([@mileistone](https://github.com/mileistone)).
 

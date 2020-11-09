@@ -10,14 +10,14 @@ class AnchorProcessor(BaseProcessor):
     """ Process the data, get several statistical distribution.
 
     Args:
-        data (dict): Parsed data using ``volkscv.parser.parser``.
-        anchor_generator (volkscv.analysis.BaseAnchorGenerator): Anchor generator.
+        data (dict): Parsed data using ``dan.analysis.datas.statistics.utils.parser``.
+        anchor_generator (dan.analysis.datas.statistics.BaseAnchorGenerator): Anchor generator.
         target_shape (tuple): Image shape after resize. Current resize method is mmdetection version.
-        assigner (volkscv.analysis.BaseAssigner): Assigner is used to assign anchors to different gt bboxes.
+        assigner (vdan.analysis.datas.statistics.BaseAssigner): Assigner is used to assign anchors to different gt bboxes.
 
     Example:
         >>> import numpy as np
-        >>> from volkscv.analyzer.statistics.utils import AnchorGenerator, MaxIoUAssigner
+        >>> from dan.analysis.datas.statistics.utils import AnchorGenerator, MaxIoUAssigner
         >>> data = dict(img_names=['./img/a.png'], labels=[[1]],
         >>>             shapes=[[800, 1333]], categories=['cat'],
         >>>             bboxes=[[[0, 0, 10, 10]]], segs=[[[0,0,1,1,2,2,3,3]]])

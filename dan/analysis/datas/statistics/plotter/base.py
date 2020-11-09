@@ -47,7 +47,7 @@ class Compose(Base):
 
     Example:
         >>> import numpy as np
-        >>> from volkscv.analyzer.statistics.plotter import OneDimPlotter
+        >>> from dan.analysis.datas.statistics.plotter import OneDimPlotter
         >>> data_1 = [np.random.randint(0, 10) for _ in range(100)]
         >>> data_2 = [np.random.randint(0, 10) for _ in range(100)]
         >>> plotter1 = OneDimPlotter(data_1, 'data_1', plt.hist, bins=10)

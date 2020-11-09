@@ -19,7 +19,7 @@ class DetFPProcessor(BaseProcessor):
     Example:
         >>> import json
         >>> import numpy as np
-        >>> from volkscv.analyzer.statistics.utils import AnchorGenerator, MaxIoUAssigner
+        >>> from vdan.analysis.datas.statistics.utils import AnchorGenerator, MaxIoUAssigner
         >>> fake_pd = [{"image_id": 1, "bbox": [0, 0, 5, 5], "score": 0.5, "category_id": 1}]
         >>> fake_gt =  { "info": {}, "licenses": [],
         >>>              "images": [{ "license": 0, "file_name": 1, "coco_url": "",
