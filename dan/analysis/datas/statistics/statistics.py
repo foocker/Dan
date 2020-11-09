@@ -15,7 +15,7 @@ class DataStatistics(BaseProcessor):
     box ratio, box per image, number of each class,. etc.)
 
     Args:
-        data (dict): Parsed data using ``volkscv.parser.parser``.
+        data (dict): Parsed data using ``dan.analysis.datas.statistics.utils.parser``.
         cfg (dict): Keys for different processors.
 
     Example:
@@ -58,14 +58,14 @@ class AnchorStatistics(BaseProcessor):
     """ Analysis the bbox with anchor.
 
     Args:
-        data (dict): Parsed data using ``volkscv.parser.parser``.
-        anchor_generator (volkscv.analysis.utils.BaseAnchorGenerator): Anchor generator.
+        data (dict): Parsed data using ``dan.analysis.datas.statistics.utils.parser``.
+        anchor_generator (dan.analysis.datas.statistics.utils.BaseAnchorGenerator): Anchor generator.
         target_shape (tuple): Image shape after resize. Current resize method is mmdetection version.
-        assigner (volkscv.analysis.utils.BaseAssigner): Assigner is used to assign anchors to different gt bboxes.
+        assigner (dan.analysis.datas.statistics.utils.BaseAssigner): Assigner is used to assign anchors to different gt bboxes.
 
     Example:
         >>> import numpy as np
-        >>> from volkscv.analyzer.statistics.utils import AnchorGenerator, MaxIoUAssigner
+        >>> from dan.analysis.datas.statistics.utils import AnchorGenerator, MaxIoUAssigner
         >>> data = dict(img_names=['./img/a.png'], labels=[[1]],
         >>>             shapes=[[800, 1333]], categories=['cat'],
         >>>             bboxes=[[[0, 0, 10, 10]]], segs=[[[0,0,1,1,2,2,3,3]]])
@@ -93,7 +93,7 @@ class FPAnalysis(BaseProcessor):
     Example:
         >>> import json
         >>> import numpy as np
-        >>> from volkscv.analyzer.statistics.utils import AnchorGenerator, MaxIoUAssigner
+        >>> from dan.analysis.datas.statistics.utils import AnchorGenerator, MaxIoUAssigner
         >>> fake_pd = [{"image_id": 1, "bbox": [0, 0, 5, 5], "score": 0.5, "category_id": 1}]
         >>> fake_gt =  { "info": {}, "licenses": [],
         >>>              "images": [{ "license": 0, "file_name": 1, "coco_url": "",

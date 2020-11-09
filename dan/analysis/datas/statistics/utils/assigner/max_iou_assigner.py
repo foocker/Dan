@@ -3,7 +3,7 @@
 import torch
 
 from .base import BaseAssigner
-from volkscv.utils.geos import bbox_overlaps
+from ....utils.geos import bbox_overlaps
 
 
 class MaxIoUAssigner(BaseAssigner):

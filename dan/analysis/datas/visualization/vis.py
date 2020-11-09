@@ -1,9 +1,11 @@
 from .classification import ClsVis
 from .detection import DetVis
+from .segmentation import SegVis
 
 CFG = dict(
     cls=['img_names', 'labels', 'scores'],
     det=['img_names', 'labels', 'bboxes', 'scores', 'bboxes_ignore', 'labels_ignore'],
+    seg=['img_names', 'labels', 'segs', 'scores'],
 )
 
 
@@ -56,6 +58,8 @@ def visualization(task, **kwargs):
         vis = ClsVis(cfg, **kwargs)
     elif task.lower() == 'det':
         vis = DetVis(cfg, **kwargs)
+    elif task.lower() == 'seg':
+        vis = SegVis(cfg, **kwargs)
     else:
         raise NotImplementedError(f"Currently support tasks are ['cls', 'det', seg] but got {task}")
 
