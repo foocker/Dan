@@ -6,10 +6,10 @@ if __name__ == "__main__":
     base_save_path = "./data_statistics/coco-like"
     CA = COCOAnalysis(ann_file=annfile, save_dir=base_save_path)
     print(CA.save_dir, CA.catToAnns)
-    CA.stats_objs_per_cat()
+    # CA.stats_objs_per_cat()
     # CA.stats_objs_per_img()
     # CA.stats_size_per_cat()
     # CA.cluster_analysis(base_save_path)
     # CA.cluster_analysis(base_save_path, by_cat=True)
-    # CA.get_weights_for_balanced_classes()
+    CA.get_weights_for_balanced_classes()
     

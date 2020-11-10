@@ -119,10 +119,13 @@ class SizeAnalysis(object):
 
     # TODO: to fix
     def get_weights_for_balanced_classes(self, to_file='weighted_samples.pkl'):
-        count_per_class = [0.] * len(self.coco.cats)
+        num_class = len(self.coco.cats)
+        count_per_class = [0.] * num_class
         for cat_id, imgs in self.coco.catToImgs.items():
-            count_per_class[cat_id - 1] = len(imgs)
+            print(cat_id)
+            count_per_class[cat_id-1] = len(imgs)
         sort_ids = np.argsort(np.array(count_per_class))
+        print(sort_ids, "sort_ids", count_per_class)
         # weight2_per_class = [0.] * len(self.coco.cats)
         # for cat_id, imgs in self.coco.catToImgs.items():
         #     weight2_per_class[cat_id-1] = len(set(imgs))
@@ -144,8 +147,8 @@ class SizeAnalysis(object):
             log_w[i] = log_w[i] / sum_log_w
         from matplotlib import pyplot as plt
         plt.plot(np.array(count_per_class)[sort_ids],
-                 np.array([1 / 15.] * 15),
-                 label='P=1/15')
+                 np.array([1. / num_class] * num_class),
+                 label='P=1/{}'.format(str(num_class)))
         plt.plot(np.array(count_per_class)[sort_ids],
                  np.array(weight_per_class)[sort_ids],
                  label='N*P=${C_1}$',
@@ -162,7 +165,7 @@ class SizeAnalysis(object):
         plt.rcParams['ytick.direction'] = 'in'
         plt.savefig(os.path.dirname(to_file) + '/P-N.png', dpi=100)
         # plt.show()    # serve don't show when has no graphicxxx
-        plt.plot(np.array([1 / 15.] * 15), label='P=1/15')
+        plt.plot(np.array([1. / num_class] * num_class), label='P=1/{}'.format(num_class))
         plt.plot(np.array(weight_per_class)[sort_ids],
                  label='N*P=${C_1}$',
                  marker='o',
@@ -234,19 +237,3 @@ class SizeAnalysis(object):
 
         return weight
 
-
-
-# if __name__ == '__main__':
-#     # size_analysis = SizeAnalysis('coco/instances_train2017.json')
-#     # size_analysis.stats_size_per_cat(to_file='coco/size_per_cat_data.json')
-#     # size_analysis.stats_objs_per_cat(to_file='coco/objs_per_cat_data.json')
-#     # mkdir_or_exist("./xx")
-#     # dump(3, "./xx/xx.json")
-#     print()
-#     # annFile = '/aidata/dataset/cigarette/instances_default.json'
-#     annFile = '/aidata/dataset/HeiLJ/coco_format/annotations/heilj_coco_v2.json'
-#     SS = SizeAnalysis(annFile)
-#     # print(SS.catToDatasets[0]["categories"], SS.catToDatasets[0]["images"])
-#     # print(SS.catToDatasets[0]["info"])
-#     # SS.stats_objs_per_cat('./objs_per_cat_data.json')
-    
