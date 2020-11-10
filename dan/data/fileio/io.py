@@ -1,7 +1,7 @@
 # Copyright (c) Open-MMLab. All rights reserved.
 from pathlib import Path
 
-from design.utils.misc import is_list_of, is_str
+from dan.design.utils.misc import is_list_of, is_str
 from .handlers import BaseFileHandler, JsonHandler, PickleHandler, YamlHandler
 
 file_handlers = {
