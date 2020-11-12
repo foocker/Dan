@@ -1,6 +1,6 @@
 from dan.design import Config, Registry
 from dan.detection.detectors import RetinaDet
-from dan.detection.builder import build_plugin, build_backbone, build_detector
+from dan.design.builder import build_plugin, build_backbone, build_detector
 # from dan.detection.netblocks import FPN
 
 

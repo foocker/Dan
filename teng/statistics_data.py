@@ -99,6 +99,7 @@ def fp_statistics(save_path="./model_statistics"):
     fa.export(save_path + '/fp_analysis', save_mode='folder')
     fa.clear()
     
+    
 if __name__ == "__main__":
     anno_data = parse_coco(ann_path=r'/aidata/dataset/HeiLJ/coco_format/annotations/heilj_coco_v2.json')
     danno = statistic_data(anno_data)

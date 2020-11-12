@@ -3,8 +3,8 @@ import argparse
 import json
 
 import numpy as np
-import glob
 from PIL import Image, ImageDraw
+import glob
 
 import io, base64
 
@@ -22,13 +22,13 @@ def img_b64_to_arr(img_b64):
     return img_arr
 
 
-class labelme2coco(object):
-    def __init__(self, labelme_json=[], save_json_path="./coco.json"):
+class Labelme2COCO(object):
+    def __init__(self, labelme_json='', save_json_path="./coco.json"):
         """
-        :param labelme_json: the list of all labelme json file paths
+        :param labelme_json: annotations path that contain the list of all labelme json file
         :param save_json_path: the path to save new json
         """
-        self.labelme_json = labelme_json
+        self.labelme_json = glob.glob(os.path.join(annotations, "*.json"))
         self.save_json_path = save_json_path
         self.images = []
         self.categories = []
@@ -38,7 +38,7 @@ class labelme2coco(object):
         self.height = 0
         self.width = 0
 
-        self.save_json()
+        self.labelme2coco()
 
     def data_transfer(self):
         for num, json_file in enumerate(self.labelme_json):
@@ -46,11 +46,6 @@ class labelme2coco(object):
                 data = json.load(fp)
                 self.images.append(self.image(data, num))
                 for shapes in data["shapes"]:
-                    # if shapes["label"] == "person":
-                    #     label = "guest"
-                    #     print(label, "1")
-                    # else:
-                    #     label = shapes["label"]
                     label = shapes["label"]
                     if label not in self.label:
                         self.label.append(label)
@@ -85,7 +80,6 @@ class labelme2coco(object):
 
     def category(self, label):
         category = {}
-        # category["supercategory"] = label[0]
         category["supercategory"] = label
         category["id"] = len(self.categories)
         category["name"] = label
@@ -104,7 +98,6 @@ class labelme2coco(object):
 
         annotation["bbox"] = list(map(float, self.getbbox(points)))
 
-        # annotation["category_id"] = label[0]  # self.getcatid(label)
         annotation["category_id"] = label  # self.getcatid(label)
         annotation["id"] = self.annID
         return annotation
@@ -156,7 +149,7 @@ class labelme2coco(object):
         data_coco["annotations"] = self.annotations
         return data_coco
 
-    def save_json(self):
+    def labelme2coco(self):
         print("save coco json")
         self.data_transfer()
         self.data_coco = self.data2coco()
@@ -168,21 +161,3 @@ class labelme2coco(object):
         json.dump(self.data_coco, open(self.save_json_path, "w"), indent=4)
 
 
-if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description="labelme annotation to coco data json file."
-    )
-    parser.add_argument(
-        "--labelme_images",
-        help="Directory to labelme images and annotation json files.",
-        type=str,
-    )
-    parser.add_argument(
-        "--output", help="Output json file path.", default="trainval.json"
-    )
-    args = parser.parse_args()
-    labelme_json = glob.glob(os.path.join(args.labelme_images, "*.json"))
-    labelme2coco(labelme_json, args.output)
-    # python3 labelme2cocoAll.py --labelme_images "/aidata/dataset/HeiLJ/heilongjiang-Y" --output "/aidata/dataset/HeiLJ/heilj_coco.json"

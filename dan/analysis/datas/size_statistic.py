@@ -1,4 +1,3 @@
-import collections
 from collections import defaultdict
 import math
 import numpy as np
@@ -10,22 +9,9 @@ from dan.data.fileio import load, dump
 from dan.analysis.datas.draw import draw_hist, draw_class_distribution
 from dan.design.utils.path import mkdir_or_exist
 
+from dan.data.utils.dictop import sort_dict
+
 import os
-
-
-def sort_dict(d, sort_key='key'):
-    ordered_d = collections.OrderedDict()
-    if sort_key == 'key':
-        for key in sorted(d.keys()):
-            ordered_d[key] = d[key]
-    elif sort_key == 'value':
-        items = d.items()
-        items.sort()
-        for key, value in items:
-            ordered_d[key] = value
-    else:
-        raise TypeError('Not supported sort key:{}'.format(sort_key))
-    return ordered_d
 
 
 class SizeAnalysis(object):
