@@ -117,6 +117,34 @@ class ImageFolderPath(datasets.ImageFolder):
         return len(self.samples)
 
 
+class SubData(object):
+    """
+    split a train data to  train and unlabel train data for making pesudo label 
+    """
+    def __init__(self):
+        pass
+    
+    def __getitem__(self, index):
+        pass
+
+    def __len(self):
+        pass
+    
+    
+class ImageLabeled(object):
+    """
+    Load image from a labeled file, such csv, or images dir and its annotations file
+    """
+    def __init__(self):
+        pass
+    
+    def __getitem__(self, index):
+        pass
+
+    def __len(self):
+        pass
+
+
 class MultiLabelSparse(object):
     """
     sparse label from json file.
