@@ -93,7 +93,9 @@ def visualiz_inference(img, boxes, labels, scores):
                     lineType=cv2.LINE_AA,
                     color=(0, 255, 0))
     plt.imshow(img)
-    plt.show()
+    # plt.show()
+    return img
+    
 
 
 def temp_test():
@@ -119,6 +121,6 @@ def temp_test():
                 img = img.cpu().permute(1, 2, 0).numpy()
                 boxes, labels, scores = sparse_detections(detection)
                 print(labels)
-                visualiz_inference(img, boxes, labels, scores)
+                _ = visualiz_inference(img, boxes, labels, scores)
             if i == 0:
                 break
