@@ -1,13 +1,19 @@
 import numpy as np
 import pandas as pd
 import os
-from tqdm.auto import tqdm
 import shutil as sh
 from os.path import join
+import torch
 
 datapath = "/vdata/dataset/global-wheat-detection"
 
 # https://towardsdatascience.com/pseudo-labeling-to-deal-with-small-datasets-what-why-how-fd6f903213af
+# https://medium.com/@nainaakash012/meta-pseudo-labels-6480acb1b68
+# https://github.com/shubhamjn1/Pseudo-Labelling---A-Semi-supervised-learning-technique/blob/master/Pseudo-Labelling.ipynb
+# https://github.com/anirudhshenoy/pseudo_labeling_small_datasets
+# https://www.analyticsvidhya.com/blog/2017/09/pseudo-labelling-semi-supervised-learning-technique/
+# https://www.kaggle.com/cdeotte/pseudo-labeling-qda-0-969
+
 
 def convertTrainLabel():
     df = pd.read_csv(join(datapath, "train.csv"))
@@ -30,7 +36,7 @@ def convertTrainLabel():
         for fold in [0]:
             val_index = index[len(index) * fold // 5:len(index) * (fold + 1) //
                               5]
-            for name, mini in tqdm(df.groupby('image_id')):
+            for name, mini in df.groupby('image_id'):
                 if name in val_index:
                     path2save = 'val2017/'
                 else:
@@ -64,6 +70,8 @@ def convertTrainLabel():
 
 from ensemble_boxes import *
 
+
+# https://github.com/ZFTurbo/Weighted-Boxes-Fusion
 
 def run_wbf(boxes,
             scores,
