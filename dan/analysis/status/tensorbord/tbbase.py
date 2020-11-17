@@ -2,7 +2,7 @@ from abc import abstractmethod, ABCMeta
   
 
 class Base(metaclass=ABCMeta):
-    """A series of interface."""
+    '''status plot for training.'''
     def __init__(self):
         super().__init__()
 

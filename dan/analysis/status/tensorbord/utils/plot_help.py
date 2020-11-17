@@ -6,7 +6,7 @@ import numpy as np
         
 def plt_imshow(img, ax, one_channel=False, bbox=None, label=None, label_names=None, score=None, mask=None):
     '''
-    show in trainning for classfication ,detection or instance segementation
+    show in training for classfication ,detection or instance segementation
     '''
     if one_channel:
         img = img.mean(dim=0)

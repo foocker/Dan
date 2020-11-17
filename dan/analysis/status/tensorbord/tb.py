@@ -74,6 +74,36 @@ class TensorboardX(Base):
     def add_histogram(self, tag, values, **kwargs):
         self.Writer.add_histogram(tag, values, **kwargs)
         
+    def add_histograms(self, tags, net, iter_n):
+        '''
+        tags: layer name in net that you want histogram, you should check it is right:
+        from torchvision.models import resnet18
+        model = resnet18()
+        for name, layer in model.named_modules():
+            print(name)
+        # layer1.0.conv2
+        # print(model.layer1[0].conv2.weight)
+        '''
+        def tag2layer(net, tags, parameter_mode='.weight'):
+            '''
+            parameter_mode='.weight', '.bias', '.grad'
+            may diff net, the rule is diff, so todo... here is resnetxx
+            please make sure, eval is work in your tags, ex: relu has no weight
+            '''
+            know_number = {str(i):'[{}]'.format(i) for i in range(10)}
+            
+            tag_split = tags.split('.')
+            call_str = ''.join([know_number[l_n] if l_n in know_number else '.'+l_n  for l_n in tag_split])
+            if parameter_mode != '.grad':
+                call_str = net + call_str + parameter_mode
+            else:
+                call_str = net + call_str + '.weight' + '.grad'
+            return eval(call_str)
+        
+        for tag in tags:
+            self.add_histogram(tag, tag2layer(net, tag, '.weight'), iter_n)
+            self.add_histogram(tag+'.grad', tag2layer(net, tag, '.grad'), iter_n)
+        
     def add_image(self, tag, img_tensor, **kwargs):
         '''
         input tensor make grid in one batch to a big tensor
@@ -218,7 +248,7 @@ class TensorboardX(Base):
         elif mode == "det":
             fig = self.plot_boxes_preds(net, images, labels)
         elif mode == "seg":
-            fig =  None
+            fig =  None   # todo
         else:
             raise("{} not impleted at present!".format(mode))
         
