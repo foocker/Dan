@@ -1,1 +1,1 @@
-from .plot_help import matplotlib_imshow, vis_bbox
+from .plot_help import plt_imshow
