@@ -6,7 +6,7 @@ from pycocotools.coco import COCO
 
 from dan.data.fileio import load, dump
 
-from dan.analysis.datas.draw import draw_hist, draw_class_distribution
+from dan.analysis.datas.draw import draw_hist, draw_class_distribution, draw_bar
 from dan.design.utils.path import mkdir_or_exist
 
 from dan.data.utils.dictop import sort_dict
@@ -101,7 +101,8 @@ class SizeAnalysis(object):
             item['value'] = len(self.coco.catToImgs[cat_id])
             cls_to_num.append(item)
         dump(cls_to_num, file=to_file)
-        draw_class_distribution(cls_to_num, save_name=os.path.dirname(to_file) + '/class_distribution.png')  # show
+        draw_class_distribution(cls_to_num, save_name=os.path.dirname(to_file) + '/class_distribution_pie.png')  # show
+        draw_bar(to_file, xtitle='Category', ytitle='Num Box', savep=os.path.dirname(to_file) + '/class_distribution_bar.png')
 
     # TODO: to fix
     def get_weights_for_balanced_classes(self, to_file='weighted_samples.pkl'):

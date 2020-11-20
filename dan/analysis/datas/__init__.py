@@ -1,1 +1,1 @@
-from .draw import draw_hist, draw_class_distribution
+from .draw import draw_hist, draw_class_distribution, draw_bar
