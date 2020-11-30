@@ -28,7 +28,7 @@ class Labelme2COCO(object):
         :param labelme_json: annotations path that contain the list of all labelme json file
         :param save_json_path: the path to save new json
         """
-        self.labelme_json = glob.glob(os.path.join(annotations, "*.json"))
+        self.labelme_json = glob.glob(os.path.join(labelme_json, "*.json"))
         self.save_json_path = save_json_path
         self.images = []
         self.categories = []

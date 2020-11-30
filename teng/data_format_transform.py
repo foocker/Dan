@@ -18,7 +18,9 @@ if __name__ == "__main__":
     # annotations = "/aidata/dataset/cigarette/detect/"
     # # /aidata/dataset/HeiLJ/heilongjiang-Y"
     # output = "/aidata/dataset/cigarette/cigarette_coco.json"
-    # data_format_coco(style, annotations, output)
+    annotations = "/vdata/dataset/action_detection/zhengfu/filter/"
+    output = "/aidata/dataset/HeiLJ/coco_format/annotations/chaoyang_val.json"
+    data_format_common(style=Labelme2COCO, annotations=annotations, output=output)
 
     # annf = "/aidata/dataset/HeiLJ/coco_format/annotations/heilj_coco_v2_sub.json"
     # imgDir="/aidata/dataset/HeiLJ/coco_format/images_sub"
