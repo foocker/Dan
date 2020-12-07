@@ -20,3 +20,6 @@
     1. 数据统计信息，模型结构+损失函数和性能的关系
     2. 不同场景不同的处理经验
     3. one is all
+
+增加：
+    https://github.com/AaronX121/Ensemble-Pytorch  ：分类集成

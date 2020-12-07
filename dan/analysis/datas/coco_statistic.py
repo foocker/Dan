@@ -157,13 +157,13 @@ def coco_data_statistic(json_path="",
             "box_num": len(annId)
         })
 
-    df = pd.DataFrame(data_statistic,
-                      columns=["category", "img_num", "box_num"])
-    b = df["box_num"].value_counts()
-    c = df["img_num"].value_counts()
+    # df = pd.DataFrame(data_statistic,
+    #                   columns=["category", "img_num", "box_num"])
+    # b = df["box_num"].value_counts()
+    # c = df["img_num"].value_counts()
 
-    base_static["box_img_ratio"] = b / c  # dense detection or sparse
+    # base_static["box_img_ratio"] = b / c  # dense detection or sparse
 
-    df.to_csv(save_name, index=False)
+    # df.to_csv(save_name, index=False)
 
     return base_static

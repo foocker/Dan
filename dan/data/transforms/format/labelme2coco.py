@@ -49,7 +49,17 @@ class Labelme2COCO(object):
                     label = shapes["label"]
                     if label not in self.label:
                         self.label.append(label)
+                    
                     points = shapes["points"]
+                    
+                    # shapes['shape_type'] == 'rectangle' or 'polygon'
+                    # when your label contains bbox and mask but u using instance model
+                    if shapes['shape_type'] == 'rectangle':
+                        x, y = points[0]
+                        w, h = points[1]
+                        bbox2ploygon = [[x, y], [x, y+h], [x+w, y+h], [x+w, y]]
+                        points = bbox2ploygon
+                        
                     self.annotations.append(self.annotation(points, label, num))
                     self.annID += 1
 
@@ -90,13 +100,14 @@ class Labelme2COCO(object):
         contour = np.array(points)
         x = contour[:, 0]
         y = contour[:, 1]
-        area = 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
-        annotation["segmentation"] = [list(np.asarray(points).flatten())]
+        # maskUtils.frPyObjects(segm, h, w) should bbox(xywh) to (xyxy), wrong
+        area = 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))    # when seg is box, this is wrong
+        annotation["segmentation"] = [list(np.asarray(points).flatten())]   # default is segementation
         annotation["iscrowd"] = 0
         annotation["area"] = area
         annotation["image_id"] = num
 
-        annotation["bbox"] = list(map(float, self.getbbox(points)))
+        annotation["bbox"] = list(map(float, self.getbbox(points)))   # from seg to bbox
 
         annotation["category_id"] = label  # self.getcatid(label)
         annotation["id"] = self.annID
