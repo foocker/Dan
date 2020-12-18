@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # annotations = "/vdata/dataset/action_detection/zhengfu/filter/"
     # output = "/aidata/dataset/HeiLJ/coco_format/annotations/chaoyang_val.json"
     annotations = "/vdata/dataset/action_detection/zhengfu/heilongjiang-Y-V2-12-1/"
-    output = "/aidata/dataset/HeiLJ/coco_format/annotations/heilj_12_1.json"
+    output = "/aidata/dataset/HeiLJ/coco_format/annotations/heilj_12_1_new.json"
     data_format_common(style=Labelme2COCO, annotations=annotations, output=output)
 
     # annf = "/aidata/dataset/HeiLJ/coco_format/annotations/heilj_coco_v2_sub.json"

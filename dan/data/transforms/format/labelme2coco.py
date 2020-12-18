@@ -56,8 +56,10 @@ class Labelme2COCO(object):
                     # when your label contains bbox and mask but u using instance model
                     if shapes['shape_type'] == 'rectangle':
                         x, y = points[0]
-                        w, h = points[1]
-                        bbox2ploygon = [[x, y], [x, y+h], [x+w, y+h], [x+w, y]]
+                        # w, h = points[1]
+                        x2, y2 = points[1]
+                        # bbox2ploygon = [[x, y], [x, y+h], [x+w, y+h], [x+w, y]]
+                        bbox2ploygon = [[x, y], [x, y2], [x2, y2], [x2, y]]
                         points = bbox2ploygon
                         
                     self.annotations.append(self.annotation(points, label, num))
