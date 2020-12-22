@@ -1,7 +1,9 @@
 https://github.com/QuickLearner171998/Auto-Label  
 https://github.com/QuickLearner171998/semi-auto-image-annotation-tool/blob/master/demo.gif  
 https://github.com/virajmavani/semi-auto-image-annotation-tool  
-https://labelbox.com/blog/model-predictions-semi-automatic-labeling-and-quality-assurance-in-production/  
+https://towardsdatascience.com/self-supervised-attention-mechanism-for-dense-optical-flow-estimation-b7709af48efd   
+
+http://docs.dubhe.ai/docs/   :自动标注平台
 
 ## Dir orgnize
 model in /snapshots/keras or /sanpshots/tensorfow or your own dir.
