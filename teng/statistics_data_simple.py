@@ -7,8 +7,10 @@ from dan.data.fileio import load, dump
 if __name__ == "__main__":
     # annfile = '/aidata/dataset/HeiLJ/coco_format/annotations/heilj_coco_v2.json'
     # base_save_path = "./data_statistics/coco-like"
-    annfile = '/aidata/dataset/haihua_2020_detect/train/train_add_id.json'
-    base_save_path = "./data_statistics/coco-like_haihua2020"
+    # annfile = '/aidata/dataset/haihua_2020_detect/train/train_add_id.json'
+    # base_save_path = "./data_statistics/coco-like_haihua2020"
+    annfile = '/aidata/dataset/HeiLJ/coco_format/annotations/heilj_12_1_new.json'
+    base_save_path = "./data_statistics/coco-like_heilj_12_1"
     CA = COCOAnalysis(ann_file=annfile, save_dir=base_save_path)
     print(CA.save_dir, CA.catToAnns)
     CA.stats_objs_per_cat()
