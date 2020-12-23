@@ -14,7 +14,8 @@ ap.add_argument("-t",
                 type=str,
                 default="kcf",
                 help="OpenCV object tracker type")
-args = vars(ap.parse_args())
+# args = vars(ap.parse_args())
+args = ap.parse_args()
 
 # extract the OpenCV version info
 (major, minor) = cv2.__version__.split(".")[:2]

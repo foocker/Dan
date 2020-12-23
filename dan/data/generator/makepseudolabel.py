@@ -118,10 +118,7 @@ def rotBoxes90(boxes, im_w, im_h):
         x1, y1, x2, y2 = box
         x1, y1, x2, y2 = x1 - im_w // 2, im_h // 2 - y1, x2 - im_w // 2, im_h // 2 - y2
         x1, y1, x2, y2 = y1, -x1, y2, -x2
-        x1, y1, x2, y2 = int(x1 + im_w // 2), int(im_h // 2 -
-                                                  y1), int(x2 + im_w //
-                                                           2), int(im_h // 2 -
-                                                                   y2)
+        x1, y1, x2, y2 = int(x1 + im_w // 2), int(im_h // 2 - y1), int(x2 + im_w // 2), int(im_h // 2 -y2)
         x1a, y1a, x2a, y2a = min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)
         ret_boxes.append([x1a, y1a, x2a, y2a])
     return np.array(ret_boxes)
