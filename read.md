@@ -1,0 +1,13 @@
+1) analysis：数据，模型，日志的分析，处理，以及训练状态的监测
+2) checkpoint：模型保存和管理
+3) classifier：分类
+4) data：所有数据的处理，io(image,video,file),augment(对应模型),生成数据，半自动化标签，采样，整合pipelines，以及不同数据的数据类
+5) design：模型组件注册搭建，配置文件，日志系统，hook，utils中的路径，进度条，三方插件包装ffmpeg等
+6) detection：检测方向，mm风格(degsin来自mm，所以这些都是mm风格，可优化)
+7) gan：生成模型
+8) metric：度量学习
+9) utils：模型初始化(待重新组织)
+10) data_statistics：数据分析存放目录
+11) docs：写的一些综述
+12) teng：数据分析实验代码(analysis)
+13) tools：模型的训练，评估，测试接口
