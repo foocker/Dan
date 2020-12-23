@@ -15,21 +15,20 @@ from ..classifier import config as cfg
 # IMG_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.ppm', '.bmp', '.pgm', '.tif', '.tiff', '.webp')
 
 data_test_trainsfom = transforms.Compose([
-        transforms.RandomVerticalFlip(),
-        transforms.Resize(cfg.input_size),
-        transforms.ToTensor(),
-        transforms.Normalize([0.5035, 0.5020, 0.5057], [0.2369, 0.2296, 0.2373])])
-
+    transforms.RandomVerticalFlip(),
+    transforms.Resize(cfg.input_size),
+    transforms.ToTensor(),
+    transforms.Normalize([0.5035, 0.5020, 0.5057], [0.2369, 0.2296, 0.2373])
+])
 
 data_train_val_trainsform = transforms.Compose([
-        transforms.RandomVerticalFlip(),
-        # transforms.RandomRotation(10),
-        # transforms.ColorJitter(brightness=0.5, contrast=1, saturation=0.5, hue=0.05),
-        transforms.Resize(cfg.input_size),
-        transforms.ToTensor(),
-        transforms.Normalize([0.5035, 0.5020, 0.5057], [0.2369, 0.2296, 0.2373])
-        ])
-
+    transforms.RandomVerticalFlip(),
+    # transforms.RandomRotation(10),
+    # transforms.ColorJitter(brightness=0.5, contrast=1, saturation=0.5, hue=0.05),
+    transforms.Resize(cfg.input_size),
+    transforms.ToTensor(),
+    transforms.Normalize([0.5035, 0.5020, 0.5057], [0.2369, 0.2296, 0.2373])
+])
 
 
 def train_val_dataset(data_dir, mode='onelabel', split=[0.1, 0.2, 0.3, 0.4]):
@@ -39,21 +38,31 @@ def train_val_dataset(data_dir, mode='onelabel', split=[0.1, 0.2, 0.3, 0.4]):
         dataset = ImageFolderPath(data_dir, data_train_val_trainsform)
     else:
         flagfile = 'flags.txt'
-        dataset = ImageAnnotationPath(data_dir, flagfile, data_train_val_trainsform, target_transform=MultiLabelTransform())
-    len_data = len(dataset)    # dataset.dataset?
+        dataset = ImageAnnotationPath(data_dir,
+                                      flagfile,
+                                      data_train_val_trainsform,
+                                      target_transform=MultiLabelTransform())
+    len_data = len(dataset)  # dataset.dataset?
     assert len_data > 10
     # raise Exception("size of data should > 10")
     test_size = [int(len_data * ra) for ra in split]  # min size > 10
     train_size = [len_data - t_s for t_s in test_size]
-    train_test_dataset = [data.random_split(dataset, [tr_s, te_s]) for tr_s, te_s in
-                          zip(train_size, test_size)]
+    train_test_dataset = [
+        data.random_split(dataset, [tr_s, te_s])
+        for tr_s, te_s in zip(train_size, test_size)
+    ]
     return train_test_dataset
 
 
 def dataloaders_dict(batch_size, train_test_dataset, i):
     # get the spite rate[i] dataset :(train, val)
-    return {x: data.DataLoader(train_test_dataset[i][index], batch_size=batch_size, shuffle=True,
-                               num_workers=0) for x, index in zip(['train', 'val'], [0, 1])}
+    return {
+        x: data.DataLoader(train_test_dataset[i][index],
+                           batch_size=batch_size,
+                           shuffle=True,
+                           num_workers=0)
+        for x, index in zip(['train', 'val'], [0, 1])
+    }
 
 
 def pil_loader(path):
@@ -92,21 +101,25 @@ def make_dataset(dir, class_to_idx, image_format=['png', 'jpg', 'jpeg']):
                     continue
     return images
 
-                
 
 class ImageFolderPath(datasets.ImageFolder):
-    def __init__(self, root, transform=None, target_transform=None,
-                 loader=pil_loader, is_valid_file=None):
-        super(ImageFolderPath, self).__init__(root,
-                                          transform=transform,
-                                          target_transform=target_transform,
-                                          loader=loader,
-                                          is_valid_file=is_valid_file)
+    def __init__(self,
+                 root,
+                 transform=None,
+                 target_transform=None,
+                 loader=pil_loader,
+                 is_valid_file=None):
+        super(ImageFolderPath,
+              self).__init__(root,
+                             transform=transform,
+                             target_transform=target_transform,
+                             loader=loader,
+                             is_valid_file=is_valid_file)
 
     def __getitem__(self, index):
         path, target = self.samples[index]
         sample = self.loader(path)
-        
+
         if self.transform is not None:
             sample = self.transform(sample)
         if self.target_transform is not None:
@@ -123,21 +136,21 @@ class SubData(object):
     """
     def __init__(self):
         pass
-    
+
     def __getitem__(self, index):
         pass
 
     def __len(self):
         pass
-    
-    
+
+
 class ImageLabeled(object):
     """
     Load image from a labeled file, such csv, or images dir and its annotations file
     """
     def __init__(self):
         pass
-    
+
     def __getitem__(self, index):
         pass
 
@@ -166,18 +179,23 @@ class MultiLabelTransform(object):
     """
     def __init__(self):
         pass
+
     def __call__(self, multilabel):
         labels = torch.tensor(multilabel)
         labels = labels.unsqueeze(0)
-        target = torch.zeros(labels.size(0), len(multilabel)).scatter_(1, labels, 1.)
+        target = torch.zeros(labels.size(0),
+                             len(multilabel)).scatter_(1, labels, 1.)
         # may can add some tricks, such smooth
         return target
 
 
-
 class ImageAnnotationPath(data.Dataset):
-    def __init__(self, root, flagsfile, transform=None, 
-                target_transform=None, loader=pil_loader):
+    def __init__(self,
+                 root,
+                 flagsfile,
+                 transform=None,
+                 target_transform=None,
+                 loader=pil_loader):
         """
         add latter
         """
@@ -190,18 +208,16 @@ class ImageAnnotationPath(data.Dataset):
         self.images = make_dataset(root, self.class_to_idx)
         self.label_sparse = MultiLabelSparse()
 
-    
     def __getitem__(self, index):
         ipath, lpath = self.images[index]
         sample = self.loader(ipath)
         target = self.label_sparse(lpath)
         if self.transform is not None:
-            sample = self.transform(sample)    # in transform.Compose
+            sample = self.transform(sample)  # in transform.Compose
         if self.target_transform is not None:
-            target = self.target_transform(target)    # one hot and some trciks
-        
-        return sample, target, ipath
+            target = self.target_transform(target)  # one hot and some trciks
 
+        return sample, target, ipath
 
     def __len__(self):
         return len(self.images)
@@ -213,20 +229,21 @@ def flagslist(flagspath):
 
     return flags
 
+
 def flagsdict(flags, mode='index'):
     assert mode in ['index', 'bool']
     flag_dict = dict()
     for flag, i in enumerate(sorted(flags)):
         if mode == 'number':
-            flag_dict.update({flag:i})
+            flag_dict.update({flag: i})
         else:
-            flag_dict.update({flag:False})
+            flag_dict.update({flag: False})
 
     return flag_dict
 
 
 def reversedict(flag_dict):
-    reversed_dict = {v:k for k, v in flag_dict.items()}
+    reversed_dict = {v: k for k, v in flag_dict.items()}
     return reversed_dict
 
 
@@ -257,7 +274,11 @@ def automultilabel(root, flagsfile, labelmapfile):
             #     continue
             new_jsonname = image_name.split('.')[0] + '.json'
             with open(new_jsonname, 'w') as ff:
-                label_dict = dict({"version": "4.2.9", "shapes": [], "imageData": None})
+                label_dict = dict({
+                    "version": "4.2.9",
+                    "shapes": [],
+                    "imageData": None
+                })
                 tmp_flags = copy.copy(flags_dict_bool)
                 for index in label_map[dir_cla]:
                     tmp_flags[reversed_dict_num[index]] = True
@@ -267,5 +288,3 @@ def automultilabel(root, flagsfile, labelmapfile):
                 label_dict["imageWidth"] = w
 
                 json.dump(label_dict, ff)
-
-
