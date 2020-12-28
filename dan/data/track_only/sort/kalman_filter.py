@@ -115,9 +115,9 @@ class KalmanFilter(object):
         # the model. This is a bit hacky.
         self._std_weight_position = 1. / 20
         self._std_weight_velocity = 1. / 160
-        self.std_R_w = std_R_w # 1e-1 #观测噪声
-        self._std_Q_w = std_Q_w # 1e-2 #过程噪声
-        self._std_Q_wv = std_Q_wv # 1e-5 #过程噪声
+        self.std_R_w = std_R_w # 1e-1   # 观测噪声
+        self._std_Q_w = std_Q_w # 1e-2   # 过程噪声
+        self._std_Q_wv = std_Q_wv # 1e-5   # 过程噪声
 
     def initiate(self, measurement):
         """Create track from unassociated measurement.
@@ -211,7 +211,7 @@ class KalmanFilter(object):
             self._std_weight_position * mean[3],
             self.std_R_w,
             self._std_weight_position * mean[3]]
-        innovation_cov = np.diag(np.square(std))   #R 观测噪声矩阵，需要降低不确定性，信任检测结果。
+        innovation_cov = np.diag(np.square(std))   # R 观测噪声矩阵，需要降低不确定性，信任检测结果。
 
         mean = np.dot(self._update_mat, mean)
         covariance = np.linalg.multi_dot((
@@ -294,7 +294,7 @@ class KalmanFilter(object):
             overwrite_b=True)
         squared_maha = np.sum(z * z, axis=0)
 
-        #计算位置距离
+        # 计算位置距离
         a, b = np.asarray(measurements[:,0]), np.asarray(measurements[:,1])
         if len(a) == 0 or len(b) == 0:
             shitf = np.zeros(len(a))

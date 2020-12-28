@@ -25,9 +25,8 @@ from datetime import datetime
 
 import cv2
 import numpy as np
-from track_only.mot_track_kc import KCTracker
-from track_only.util import draw_bboxes_conf_cls
-# from dan.data.track_only.mot_track_kc import KCTracker
+from dan.data.track_only.mot_track_kc import KCTracker
+from dan.data.track_only.util import draw_bboxes_conf_cls
 
 
 #将box四点坐标转换成左上角坐标和宽和高，并过滤低置信度的框
@@ -40,7 +39,7 @@ def bbox_to_xywh_cls_conf(bbox_xyxyc, conf_thresh=0.5):
     else:
         return []
 
-#opencv显示目标框和置信度
+# opencv显示目标框和置信度
 def showResult(result_xyxyc, ori_im, save_pth, color=(0, 255, 0), conf_th=0.4):
     ori_im = ori_im.copy()
     result_xyxyc = result_xyxyc.copy()
@@ -61,7 +60,7 @@ def makeFile(file_pth):
         os.remove(file_pth)
 
 
-#跟踪处理类
+# 跟踪处理类
 class Detector(object):
     def __init__(
             self,
@@ -125,7 +124,7 @@ class Detector(object):
                 os.makedirs(self.json_dir, exist_ok=True)
         print("Track Detector init sucessed!\n")
 
-    #打开视频，并创建结果视频
+    # 打开视频，并创建结果视频
     def open(self, video_path):
         assert os.path.isfile(video_path), "Error: path error"
         print("video_path %s \n" % video_path)
@@ -142,7 +141,7 @@ class Detector(object):
         if self.im_width > 0 and self.im_height > 0:
             print("open video sucessed!\n")
 
-    #结果保存成json文件
+    # 结果保存成json文件
     def save_file(self, path, item):
         item = json.dumps((item))
         try:
@@ -155,14 +154,14 @@ class Detector(object):
         except Exception as e:
             print("write error==>", e)
 
-    #从coco json文件中解析目标框
+    # 从coco json文件中解析目标框
     def de_coco_format(self, ann_json):
         json_data = []
         # annotations = ann_json['annotation']
         if ann_json:
             for i, annotation in enumerate(ann_json):
                 conf_ = float(annotation['score'])
-                cls_ = int(annotation['category_id'] - 1 - 80)
+                cls_ = int(annotation['category_id'] - 1 - 80)    # change for your own dataset from config
                 x1 = float(annotation['bbox'][0])
                 x2 = float(annotation['bbox'][2] + x1)
                 y1 = float(annotation['bbox'][1])
@@ -171,16 +170,16 @@ class Detector(object):
                 json_data.append(np.array(object_))
         return np.array(json_data)
 
-    #将目标框等信息保存成coco json文件
+    # 将目标框等信息保存成coco json文件
     def coco_format(self, type_, id_name, im, result):
-        # annotations = []
+        # annotations = []   id_name ?
         temp = []
         height, width, _ = im.shape
         if result.shape[0] == 0:
             return temp
         else:
             for j in range(result.shape[0]):
-                cls_id = int(result[j][6]) + 1 + 80
+                cls_id = int(result[j][6]) + 1 + 80    # change 
                 x1 = int(result[j][0])
                 x2 = int(result[j][2])
                 y1 = int(result[j][1])
@@ -200,9 +199,9 @@ class Detector(object):
                 })
         return temp
 
-    #跟踪处理，这里用于调试
+    # 跟踪处理，这里用于调试
     def detect(self):
-        xmin, ymin, xmax, ymax = self.area
+        xmin, ymin, xmax, ymax = self.area  # ? area
         frame_no = 0
         avg_fps = 0.0
         # for path, img, ori_im, vid_cap in self.dataset:
@@ -219,7 +218,7 @@ class Detector(object):
             if self.write_json:
                 jsonname = self.json_dir + '/' + str(frame_no) + '.json'
                 if len(results) > 0:
-                    ann = self.coco_format(1, 1, ori_im, results)
+                    ann = self.coco_format(1, 1, ori_im, results)    # just id_name = 1?
                     self.save_file(jsonname, ann)
             if self.read_json:
                 jsonname = self.json_dir + '/' + str(frame_no) + '.json'
@@ -285,7 +284,7 @@ class Detector(object):
         if self.save_feature:
             self.saveFeature(self.features_npy, self.all_features)
 
-    #跟踪处理，用于自动标定
+    # 跟踪处理，用于自动标定
     def run_track(self, image_list, label_list):
         frame_no = 0
         avg_fps = 0.0

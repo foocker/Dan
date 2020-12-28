@@ -1,26 +1,3 @@
-"""
-MIT License
-
-Copyright (c) 2020 Ziqiang
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
 from __future__ import absolute_import
 
 import numpy as np
@@ -34,18 +11,6 @@ from .track import Track
 class Tracker:
     """
     This is the multi-target tracker.
-
-    Parameters
-    ----------
-    metric : nn_matching.NearestNeighborDistanceMetric
-        A distance metric for measurement-to-track association.
-    max_age : int
-        Maximum number of missed misses before a track is deleted.
-    n_init : int
-        Number of consecutive detections before the track is confirmed. The
-        track state is set to `Deleted` if a miss occurs within the first
-        `n_init` frames.
-
     Attributes
     ----------
     metric : nn_matching.NearestNeighborDistanceMetric
@@ -58,6 +23,10 @@ class Tracker:
         A Kalman filter to filter target trajectories in image space.
     tracks : List[Track]
         The list of active tracks at the current time step.
+        
+    # 是一个多目标tracker，保存了很多个track轨迹
+    # 负责调用卡尔曼滤波来预测track的新状态+进行匹配工作+初始化第一帧
+    # Tracker调用update或predict的时候，其中的每个track也会各自调用自己的update或predict
 
     """
 
@@ -66,14 +35,14 @@ class Tracker:
         self.max_iou_distance = max_iou_distance
         self.max_age = max_age
         self.n_init = n_init
+        # n_init代表需要n_init次数的update才会将track状态设置为confirmed
 
         self.kf = kalman_filter.KalmanFilter(std_Q_w=std_Q_w, std_Q_wv=std_Q_wv, std_R_w=std_R_w)
-        self.tracks = []
-        self._next_id = 1
+        self.tracks = []  # 保存一系列轨迹
+        self._next_id = 1  # 下一个分配的轨迹id
 
     def predict(self, frame_id=1):
         """Propagate track state distributions one time step forward.
-
         This function should be called once every time step, before `update`.
         """
         for track in self.tracks:

@@ -26,12 +26,13 @@ import time
 
 import cv2
 import numpy as np
-from track_only.feature.feature_extractor_batch import Extractor
-from track_only.post_process import removeUnMoveLowConfObj, writeResult, removeSmallOrBigBbox
-from track_only.sort.detection import Detection
-from track_only.sort.iou_matching import iou
-from track_only.sort.nn_matching import NearestNeighborDistanceMetric
-from track_only.sort.tracker import Tracker
+
+from dan.data.track_only.sort.tracker import Tracker
+from dan.data.track_only.sort.iou_matching import iou
+from dan.data.track_only.sort.detection import Detection
+from dan.data.track_only.feature.feature_extractor_batch import Extractor
+from dan.data.track_only.sort.nn_matching import NearestNeighborDistanceMetric
+from dan.data.track_only.post_process import removeUnMoveLowConfObj, writeResult, removeSmallOrBigBbox
 
 
 class KCTracker(object):
@@ -60,6 +61,7 @@ class KCTracker(object):
         self.extractor = None
         self.height, self.width = None, None
         if init_extractor:
+            # Extractor should add dl model for multiclass, hog can't
             self.extractor = Extractor(model_name=model_name,
                                        load_path=model_path,
                                        gpu_ids=gpu_ids, cls=cls_)
@@ -218,7 +220,7 @@ class KCTracker(object):
         y2 = min(int(y1 + h), self.height - 1)
         return int(x1), int(y1), x2, y2
 
-    # for yolo  (centerx,centerx, w,h -> x1,y1,x2,y2)
+    # for yolo  (centerx,centery, w,h -> x1,y1,x2,y2)
     def _cxcywh_to_xyxy(self, bbox_xywh):
         x, y, w, h = bbox_xywh
         x1 = max(int(x - w / 2), 0)

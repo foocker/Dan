@@ -36,16 +36,6 @@ class Detection(object):
         Detector confidence score.
     feature : array_like
         A feature vector that describes the object contained in this image.
-
-    Attributes
-    ----------
-    tlwh : ndarray
-        Bounding box in format `(top left x, top left y, width, height)`.
-    confidence : ndarray
-        Detector confidence score.
-    feature : ndarray | NoneType
-        A feature vector that describes the object contained in this image.
-
     """
 
     def __init__(self, tlwh, confidence, feature, ori_id):
