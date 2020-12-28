@@ -1,23 +1,4 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-/**
-* Copyright 2020 Zhejiang Lab. All Rights Reserved.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-* =============================================================
-*/
-"""
 import json
 import os
 import time
@@ -29,7 +10,7 @@ from dan.data.track_only.mot_track_kc import KCTracker
 from dan.data.track_only.util import draw_bboxes_conf_cls
 
 
-#将box四点坐标转换成左上角坐标和宽和高，并过滤低置信度的框
+# 将box四点坐标转换成左上角坐标和宽和高，并过滤低置信度的框
 def bbox_to_xywh_cls_conf(bbox_xyxyc, conf_thresh=0.5):
     if any(bbox_xyxyc[:, 4] >= conf_thresh):
         bbox = bbox_xyxyc[bbox_xyxyc[:, 4] >= conf_thresh, :]
