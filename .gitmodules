@@ -1,0 +1,3 @@
+[submodule "dan/data/autolabel/dan/data/autolabel/Weighted-Boxes-Fusion"]
+	path = dan/data/autolabel/dan/data/autolabel/Weighted-Boxes-Fusion
+	url = https://github.com/ZFTurbo/Weighted-Boxes-Fusion.git

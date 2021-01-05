@@ -1,3 +1,4 @@
+# coding=utf-8
 from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
@@ -600,9 +601,9 @@ class MainGUI:
 
 
 if __name__ == '__main__':
-    # root = Tk()
-    # imgicon = PhotoImage(file='icon.gif')
-    # root.tk.call('wm', 'iconphoto', root._w, imgicon)
-    # tool = MainGUI(root)
-    # root.mainloop()
+    root = Tk()
+    imgicon = PhotoImage(file='icon.gif')
+    root.tk.call('wm', 'iconphoto', root._w, imgicon)
+    tool = MainGUI(root)
+    root.mainloop()
     print(cur_path)
