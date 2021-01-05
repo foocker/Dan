@@ -1,9 +1,8 @@
 from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
-import keras
-from keras_retinanet import models
-from keras_retinanet.utils.image import preprocess_image
+from dan.data.autolabel.fake import models
+from dan.data.autolabel.fake import preprocess_image
 
 # import miscellaneous modules
 import os
@@ -21,13 +20,15 @@ cur_path = pathlib.Path(__file__).parent.absolute().as_posix()
 sys.path.append(cur_path)
 os.chdir(cur_path)
 
+model_dir = cur_path   
+
 
 
 class MainGUI:
     def __init__(self, master):
 
-        # to choose between keras or tensorflow models
-        self.keras_ = 1  # default
+        # to choose between pytorch or tensorflow models
+        self.pytorch = 1  # default
         self.tensorflow_ = 0
         self.models_dir = ''  # gets updated as per user choice
         self.model_path = ''
@@ -112,7 +113,7 @@ class MainGUI:
 
         self.mb = Menubutton(self.ctrlPanel, text="COCO Classes for Suggestions", relief=RAISED)
         self.mb.grid(columnspan=2, sticky=W + E)
-        self.mb.menu = Menu(self.mb, tearoff=0)
+        self.mb.menu = Menu(self.mb, tearoff=0)  # 菜单条，用来实现下拉和弹出式菜单，点下菜单后弹出的一个选项列表,用户可以从中选择
         self.mb["menu"] = self.mb.menu
 
         self.addCocoBtn = Button(self.ctrlPanel, text="+", command=self.add_labels_coco)
@@ -135,6 +136,7 @@ class MainGUI:
         self.zoomcanvas.grid(columnspan=2, sticky=W + E)
 
         # Image Editing Region
+        # Canvas: 组织图形。这个部件可以用来绘制图表和图，创建图形编辑器，实现定制窗口部件。
         self.canvas = Canvas(self.frame, width=500, height=500)
         self.canvas.grid(row=0, column=1, sticky=W + N)
         self.canvas.bind("<Button-1>", self.mouse_click)
@@ -149,8 +151,8 @@ class MainGUI:
         self.listPanel = Frame(self.frame)
         self.listPanel.grid(row=0, column=2, sticky=W + N)
         self.listBoxNameLabel = Label(self.listPanel, text="List of Objects").pack(fill=X, side=TOP)
-        self.objectListBox = Listbox(self.listPanel, width=40)
-        self.objectListBox.pack(fill=X, side=TOP)
+        self.objectListBox = Listbox(self.listPanel, width=40)  
+        self.objectListBox.pack(fill=X, side=TOP)    # pack: https://blog.csdn.net/qq_37431083/article/details/103960734
         self.delObjectBtn = Button(self.listPanel, text="Delete", command=self.del_bbox)
         self.delObjectBtn.pack(fill=X, side=TOP)
         self.clearAllBtn = Button(self.listPanel, text="Clear All", command=self.clear_bbox)
@@ -161,7 +163,7 @@ class MainGUI:
         self.addLabelBtn = Button(self.listPanel, text="+", command=self.add_label).pack(fill=X, side=TOP)
         self.delLabelBtn = Button(self.listPanel, text="-", command=self.del_label).pack(fill=X, side=TOP)
 
-        self.labelListBox = Listbox(self.listPanel)
+        self.labelListBox = Listbox(self.listPanel)  # Listbox: itemconfig, insert, delete, curselection
         self.labelListBox.pack(fill=X, side=TOP)
 
         self.addThresh = Label(self.listPanel, text="Threshold").pack(fill=X, side=TOP)
@@ -169,7 +171,8 @@ class MainGUI:
         self.textBoxTh.pack(fill=X, side=TOP)
         self.enterthresh = Button(self.listPanel, text="Set", command=self.changeThresh).pack(fill=X, side=TOP)
 
-        if self.keras_:
+        # change
+        if self.pytorch:
             self.cocoLabels = config.labels_to_names.values()
         else:
             self.cocoLabels = tf_config.labels_to_names.values()
@@ -199,16 +202,15 @@ class MainGUI:
         return tf.Session(config=config)
 
     def available_models(self):
-        self.models_dir = os.path.join(cur_path, 'snapshots')
-        # only for keras and tf
+        self.models_dir = os.path.join(model_dir, 'snapshots')
+        # only for pytorch and tf
         model_categ = [dir_ for dir_ in os.listdir(self.models_dir) if os.path.isdir(os.path.join(self.models_dir, dir_))]
         # creating all model options list
         model_names = []
         for categ in model_categ:
-            for name in os.listdir(os.path.join(self.models_dir , categ)):
-                model_names.append(os.path.join(categ,name))
+            for name in os.listdir(os.path.join(self.models_dir, categ)):
+                model_names.append(os.path.join(categ, name))
         return model_names
-
 
     def changeThresh(self):
         if(float(self.textBoxTh.get()) >0 and float(self.textBoxTh.get()) <1):
@@ -489,15 +491,15 @@ class MainGUI:
     def add_model(self):
         for listidxmodel, list_model_name in enumerate(self.available_models()):
             if(self.modelIntVars[listidxmodel].get()):
-                # check which model is it keras or tensorflow
+                # check which model is it pytorch or tensorflow
                 self.model_path = os.path.join(self.models_dir,list_model_name)
                 # if its Tensorflow model then modify path
-                if('keras' in list_model_name):
-                    self.keras_ = 1
+                if('pytorch' in list_model_name):
+                    self.pytorch = 1
                     self.tensorflow_ = 0
                 elif('tensorflow' in list_model_name):
-                    self.model_path = os.path.join(self.model_path,'frozen_inference_graph.pb')
-                    self.keras_ = 0
+                    self.model_path = os.path.join(self.model_path,'frozen_inference_graph.pb')   # name for change
+                    self.pytorch = 0
                     self.tensorflow_ = 1
                     # change cocoLabels corresponding to tensorflow
                     self.cocoLabels = tf_config.labels_to_names.values()
@@ -552,7 +554,6 @@ class MainGUI:
             m_name = os.path.split((os.path.split(self.model_path)[0]))[1]
 
         else:
-            keras.backend.tensorflow_backend.set_session(self.get_session())
             model_path = self.model_path
             model = models.load_model(model_path, backbone_name='resnet50')
             image = preprocess_image(opencvImage)
@@ -569,7 +570,7 @@ class MainGUI:
                 continue
 
             b = box
-            # only if using tf models as keras and tensorflow have different coordinate order
+            # only if using tf models as pytorch and tensorflow have different coordinate order
             if(self.tensorflow_):
                 w, h = self.img.size
                 (b[0],b[1],b[2],b[3]) = (b[1]*w, b[0]*h, b[3]*w, b[2]*h)
@@ -599,8 +600,9 @@ class MainGUI:
 
 
 if __name__ == '__main__':
-    root = Tk()
-    imgicon = PhotoImage(file='icon.gif')
-    root.tk.call('wm', 'iconphoto', root._w, imgicon)
-    tool = MainGUI(root)
-    root.mainloop()
+    # root = Tk()
+    # imgicon = PhotoImage(file='icon.gif')
+    # root.tk.call('wm', 'iconphoto', root._w, imgicon)
+    # tool = MainGUI(root)
+    # root.mainloop()
+    print(cur_path)
