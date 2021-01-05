@@ -22,6 +22,7 @@ sys.path.append(cur_path)
 os.chdir(cur_path)
 
 
+
 class MainGUI:
     def __init__(self, master):
 
