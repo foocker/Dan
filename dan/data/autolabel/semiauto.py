@@ -1,3 +1,4 @@
+# coding=utf-8
 from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
@@ -21,6 +22,7 @@ sys.path.append(cur_path)
 os.chdir(cur_path)
 
 model_dir = cur_path   
+
 
 
 class MainGUI:
