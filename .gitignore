@@ -3,3 +3,5 @@ todo.txt
 __pycache__/*
 dan.egg-info
 *.pyc
+*.pth
+*.pt
