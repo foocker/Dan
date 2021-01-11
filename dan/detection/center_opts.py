@@ -346,22 +346,27 @@ class opts(object):
         print('training chunk_sizes:', opt.chunk_sizes)
 
         # opt.root_dir = os.path.join(os.path.dirname(__file__), '..', '..')
-        opt.root_dir = '/vdata/Synthesize/centernet_lib'
+        # opt.root_dir = '/vdata/Synthesize/centernet_lib'
+        opt.root_dir = '/aidata/dataset/tianchi/result'  # result
         # opt.data_dir = os.path.join(opt.root_dir, 'data')
-        opt.data_dir = '/root/Codes/CenterNet/data/'
+        # opt.data_dir = '/root/Codes/CenterNet/data/'
+        opt.data_dir = '/aidata/dataset/tianchi/tile_round1_train_20201231/train_imgs_crop_new/'
         opt.exp_dir = os.path.join(opt.root_dir, 'exp', opt.task)
         opt.save_dir = os.path.join(opt.exp_dir, opt.exp_id)
+        if not os.path.exists(opt.save_dir):
+            os.makedirs(opt.save_dir)
         opt.debug_dir = os.path.join(opt.save_dir, 'debug')
         print('The output will be saved to ', opt.save_dir)
 
         if opt.resume and opt.load_model == '':
             model_path = opt.save_dir[:-4] if opt.save_dir.endswith('TEST') \
                         else opt.save_dir
-            opt.load_model = os.path.join(model_path, 'model_last.pth')
+            opt.load_model = os.path.join(model_path, 'model_best.pth')
         return opt
 
     def update_dataset_info_and_set_heads(self, opt, dataset):
         input_h, input_w = dataset.default_resolution
+        print('default_resolution is :', dataset.default_resolution)
         opt.mean, opt.std = dataset.mean, dataset.std
         opt.num_classes = dataset.num_classes
 
@@ -391,8 +396,8 @@ class opts(object):
     def init(self, args=''):
         default_dataset_info = {
             'ctdet': {
-                'default_resolution': [512, 512],
-                'num_classes': 1,
+                'default_resolution': [750, 1024],   # 1024, 1024
+                'num_classes': 6,
                 'mean': [0.408, 0.447, 0.470],
                 'std': [0.289, 0.274, 0.278],
                 'dataset': 'cig_box'

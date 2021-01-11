@@ -63,7 +63,7 @@ def main(opt):
                                                pin_memory=True,
                                                drop_last=True)
 
-    print('Starting training...')
+    print('Starting training...', 'epoch is: ', opt.num_epochs, opt.dataset.default_resolution)
     best = 1e10
     for epoch in range(start_epoch + 1, opt.num_epochs + 1):
         mark = epoch if opt.save_all else 'last'
