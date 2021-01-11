@@ -28,7 +28,7 @@ class SizeAnalysis(object):
         assert isinstance(coco, COCO)
         self.coco = coco
         self.size_range = size_range
-        # self.low_limit = 0
+        self.low_limit = 0
         # self.up_limit = 100000000
         self.createIndex()
 
