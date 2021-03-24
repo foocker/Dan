@@ -84,8 +84,8 @@ class CigBox(data.Dataset):
                     bbox_out = list(map(self._to_float, bbox[0:4]))
 
                     detection = {
-                        "image_id": int(image_id),
-                        "category_id": int(category_id),
+                        "image_id": int(image_id),    # name
+                        "category_id": int(category_id),   # category
                         "bbox": bbox_out,
                         "score": float("{:.2f}".format(score))
                     }
@@ -286,14 +286,11 @@ class CigBox(data.Dataset):
 
     def save_results(self, results, save_dir):
         json.dump(self.convert_eval_format(results),
-                  open('{}/results.json'.format(save_dir), 'w'))
+                  open('{}/results.json'.format(save_dir), 'w'), indent=4)
 
     def run_eval(self, results, save_dir):
-        # result_json = os.path.join(save_dir, "results.json")
-        # detections  = self.convert_eval_format(results)
-        # json.dump(detections, open(result_json, "w"))
         self.save_results(results, save_dir)
-        coco_dets = self.coco.loadRes('{}/results.json'.format(save_dir))
+        coco_dets = self.coco.loadRes('{}/results.json'.format(save_dir))   # may wrong u should upgrade your pycocotools
         coco_eval = COCOeval(self.coco, coco_dets, "bbox")
         coco_eval.evaluate()
         coco_eval.accumulate()

@@ -6,7 +6,7 @@ from dan.detection.center_opts import opts
 from dan.detection.apis.centernet.ctdet import CtdetTrainer
 from dan.data import DataParallel, CigBox
 from dan.detection.utils import load_model, save_model
-from dan.detection.detectors.center import CtdetDetector
+from dan.detection.detectors.center import CtdetDetector   # for registry
 
 from dan.design import Config
 from dan.design.builder import build_heatmap

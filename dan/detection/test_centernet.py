@@ -10,10 +10,14 @@ import time
 from progress.bar import Bar
 import torch
 
+from dan.design import Config
+from dan.design.builder import build_heatmap
 from dan.data import CigBox
 from dan.detection.center_opts import opts
 from dan.detection.utils.averagetime import AverageMeter
-from dan.detection.detectors.center import CtdetDetector
+from dan.detection.utils import load_model, save_model
+
+from dan.detection.detectors.center import CtdetDetector   # for registry
 
 
 class PrefetchDataset(torch.utils.data.Dataset):
@@ -49,11 +53,17 @@ def prefetch_test(opt):
     Dataset = CigBox
     opt = opts().update_dataset_info_and_set_heads(opt, Dataset)
     print(opt)
-    Detector = CtdetDetector
-
+    
     split = 'val' if not opt.trainval else 'test'
     dataset = Dataset(opt, split)
-    detector = Detector(opt)
+    cfg = Config.fromfile(opt.config)
+    detector = build_heatmap(cfg.model)
+    
+    if opt.load_model != '':
+        model, optimizer, start_epoch = load_model(detector, opt.load_model,
+                                                   optimizer, opt.resume,
+                                                   opt.lr, opt.lr_step)
+    
 
     data_loader = torch.utils.data.DataLoader(PrefetchDataset(
         opt, dataset, detector.pre_process),
@@ -91,7 +101,8 @@ def test(opt):
 
     split = 'val' if not opt.trainval else 'test'
     dataset = Dataset(opt, split)
-    detector = Detector(opt)
+    cfg = Config.fromfile(opt.config)
+    detector = build_heatmap(cfg.model)
 
     results = {}
     num_iters = len(dataset)
