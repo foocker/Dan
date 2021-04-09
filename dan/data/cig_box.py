@@ -15,8 +15,9 @@ import math
 
 
 class CigBox(data.Dataset):
-    num_classes = 1
-    default_resolution = [512, 512]
+    num_classes = 6
+    # default_resolution = [512, 512]
+    default_resolution = [1024, 1024]
     mean = np.array([0.40789654, 0.44719302, 0.47026115],
                     dtype=np.float32).reshape(1, 1, 3)
     std = np.array([0.28863828, 0.27408164, 0.27809835],
@@ -24,22 +25,26 @@ class CigBox(data.Dataset):
 
     def __init__(self, opt, split):
         super(CigBox, self).__init__()
-        self.data_dir = os.path.join(opt.data_dir, 'cig_box')
+        # self.data_dir = os.path.join(opt.data_dir, 'cig_box')
+        self.data_dir = '/aidata/dataset/tianchi/tile_round1_train_20201231/'
         self.img_dir = os.path.join(self.data_dir, 'images',
                                     '{}'.format(split))
+        
         if split == 'val':
             self.annot_path = os.path.join(self.data_dir, 'annotations',
-                                           'val.json')
+                                           'val_crop_coco.json')
         else:
             if opt.task == 'exdet':
                 self.annot_path = os.path.join(self.data_dir, 'annotations',
-                                               'train.json')
+                                               'trains_crop_coco.json')
             else:
                 self.annot_path = os.path.join(self.data_dir, 'annotations',
-                                               'train.json')
-        self.max_objs = 128
-        self.class_name = ['__background__', 'cigarette']
-        self._valid_ids = [0, 1]
+                                               'trains_crop_coco.json')
+        self.max_objs = 256
+        # self.class_name = ['__background__', 'cigarette']
+        self.class_name = [1, 2, 3, 4, 5, 6]
+        # self.class_name = [0, 1, 2, 3, 4, 5]
+        self._valid_ids = [0, 1, 2, 3, 4, 5]
         self.cat_ids = {v: i for i, v in enumerate(self._valid_ids)}
         self.voc_color = [(v // 32 * 64 + 64, (v // 8) % 4 * 64, v % 8 * 32) \
                           for v in range(1, self.num_classes + 1)]
@@ -79,8 +84,8 @@ class CigBox(data.Dataset):
                     bbox_out = list(map(self._to_float, bbox[0:4]))
 
                     detection = {
-                        "image_id": int(image_id),
-                        "category_id": int(category_id),
+                        "image_id": int(image_id),    # name
+                        "category_id": int(category_id),   # category
                         "bbox": bbox_out,
                         "score": float("{:.2f}".format(score))
                     }
@@ -107,7 +112,9 @@ class CigBox(data.Dataset):
     def __getitem__(self, index):
         img_id = self.images[index]
         file_name = self.coco.loadImgs(ids=[img_id])[0]['file_name']
+        # print(file_name, 'xx')
         img_path = os.path.join(self.img_dir, file_name)
+        # print(img_path, 'xx')
         ann_ids = self.coco.getAnnIds(imgIds=[img_id])
         anns = self.coco.loadAnns(ids=ann_ids)
         num_objs = min(len(anns), self.max_objs)
@@ -201,7 +208,7 @@ class CigBox(data.Dataset):
             # cv2.rectangle(inp_, (x1, y1), (x2, y2), (255,0,0), 2)
             # cv2.imwrite('./img_affine_color_see_bbox.jpg', inp_)
             cls_id = int(
-                self.cat_ids[ann['category_id']]) - 1  # for just one classes
+                self.cat_ids[ann['category_id']])  # for just one classes
             if flipped:
                 # print('flipped')
                 bbox[[0, 2]] = width - bbox[[2, 0]] - 1
@@ -279,14 +286,11 @@ class CigBox(data.Dataset):
 
     def save_results(self, results, save_dir):
         json.dump(self.convert_eval_format(results),
-                  open('{}/results.json'.format(save_dir), 'w'))
+                  open('{}/results.json'.format(save_dir), 'w'), indent=4)
 
     def run_eval(self, results, save_dir):
-        # result_json = os.path.join(save_dir, "results.json")
-        # detections  = self.convert_eval_format(results)
-        # json.dump(detections, open(result_json, "w"))
         self.save_results(results, save_dir)
-        coco_dets = self.coco.loadRes('{}/results.json'.format(save_dir))
+        coco_dets = self.coco.loadRes('{}/results.json'.format(save_dir))   # may wrong u should upgrade your pycocotools
         coco_eval = COCOeval(self.coco, coco_dets, "bbox")
         coco_eval.evaluate()
         coco_eval.accumulate()

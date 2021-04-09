@@ -37,7 +37,7 @@ def draw_class_distribution(cls_to_num, save_name='./class_distribution.png'):
     plt.setp(texts, fontproperties=proptease)
     ax1.set_title('Class Distribution ', loc='center')
     ax2.axis('off')
-    labels_nums = [a+":" + str(b) for a, b in zip(labels, sizes)]
+    labels_nums = [str(a)+":" + str(b) for a, b in zip(labels, sizes)]
     ax2.set_title('category:boxes', loc='left')
     ax2.legend(patches, labels_nums, loc='center left', prop={'size': 10})
     plt.tight_layout()

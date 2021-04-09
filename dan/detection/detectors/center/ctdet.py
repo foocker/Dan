@@ -4,11 +4,6 @@ from progress.bar import Bar
 import time
 import torch
 
-# try:
-#     from external.nms import soft_nms
-# except:
-#     print('NMS not imported! If you need it,'
-#           ' do \n cd $CenterNet_ROOT/src/lib/external \n make')
 
 from dan.detection.core.center.decode import ctdet_decode
 from dan.detection.core.center.utils import flip_tensor

@@ -31,7 +31,8 @@ class COCO2YOLO(object):
         nms=[cat['name'] for cat in catsInfo]
         print('COCO categories: {}'.format(nms))
 
-        imgIds = self.coco.getImgIds(catIds=catIds) 
+        # imgIds = self.coco.getImgIds(catIds=catIds) # may empty
+        imgIds = self.coco.getImgIds()
         imgs = self.coco.loadImgs(imgIds)
         for img in imgs: 
             fName = img["file_name"]
