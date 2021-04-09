@@ -79,7 +79,7 @@ def run_wbf(boxes,
             iou_thr=0.5,
             skip_box_thr=0.7,
             weights=None):
-    #boxes = [prediction[image_index]['boxes'].data.cpu().numpy()/(image_size-1) for prediction in predictcocoions]
+    #boxes = [prediction[image_index]['boxes'].data.cpu().numpy()/(image_size-1) for prediction in predictcocogiions]
     #scores = [prediction[image_index]['scores'].data.cpu().numpy() for prediction in predictions]
     labels = [np.zeros(score.shape[0]) for score in scores]
     boxes = [box / (image_size) for box in boxes]
